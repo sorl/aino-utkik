@@ -1,4 +1,5 @@
 import re
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core import urlresolvers
 from django.utils.functional import update_wrapper, memoize
@@ -16,10 +17,12 @@ _view_cache = {}
 
 def get_view(name):
     """
-    Import and returns a view from string
+    Import and returns a view from string. You can use the full string path
+    or a shorter notation ``myapp.ViewClass`` if ``myapp`` is in the list
+    of ``INSTALLED_APPS``.
     """
     mod_name, attr = name.rsplit('.', 1)
-    if not mod_name.endswith('.views'):
+    if mod_name in settings.INSTALLED_APPS and not mod_name.endswith('.views'):
         try:
             mod = import_module(mod_name + '.views')
             return getattr(mod, attr)
