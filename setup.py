@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='aino-utkik',
-    version='0.1',
+    version='0.1.1',
     description='Clean and simple class based views for Django',
     long_description=open('README.rst').read(),
     author='Mikko Hellsing',

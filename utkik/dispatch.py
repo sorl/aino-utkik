@@ -19,14 +19,17 @@ def get_view(name):
     Import and returns a view from sting
     """
     mod_name, attr = name.rsplit('.', 1)
-    if not mod_name.endswith('.views'):
-        try:
-            mod = import_module(mod_name + '.views')
-            return getattr(mod, attr)
-        except Exception:
-            pass
-    mod = import_module(mod_name)
-    return getattr(mod, attr)
+    try:
+        mod = import_module(mod_name)
+        return getattr(mod, attr)
+    except (ImportError, AttributeError), e:
+        if not mod_name.endswith('.views'):
+            try:
+                mod = import_module(mod_name + '.views')
+                return getattr(mod, attr)
+            except Exception:
+                pass
+        raise e # original error
 get_view = memoize(get_view, _view_cache, 1)
 
 
