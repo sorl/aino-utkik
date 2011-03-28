@@ -12,17 +12,17 @@ __all__ = ['handler404', 'handler500', 'include', 'patterns', 'url']
 handler404 = 'django.views.defaults.page_not_found'
 handler500 = 'django.views.defaults.server_error'
 view_repr_pat = re.compile(r"\.(\w+)'>$")
-_view_cache = {}
+_view_cache = {} # memoize cache
 
 
 def get_view(name):
-    """
-    Import and returns a view from string. You can use the full string path
-    or a shorter notation ``myapp.ViewClass`` if ``myapp`` is in the list
-    of ``INSTALLED_APPS``.
+    """Import and returns a view from string. You can use the full string path
+    or a shorter notation ``myapp.ViewClass`` if ``myapp`` is in the list of
+    ``INSTALLED_APPS``. We memoize the call to this function as it's unnecessary
+    to resolve and import every time this is called with the same argument.
     """
     mod_name, attr = name.rsplit('.', 1)
-    if mod_name in settings.INSTALLED_APPS and not mod_name.endswith('.views'):
+    if mod_name in settings.INSTALLED_APPS:
         try:
             mod = import_module(mod_name + '.views')
             return getattr(mod, attr)
@@ -34,17 +34,16 @@ get_view = memoize(get_view, _view_cache, 1)
 
 
 class LazyView(object):
-    """
-    Lazy wrapper for a view function or class
+    """Lazy wrapper for a view function or class. This is what the django
+    handler will be calling.
     """
     def __init__(self, view):
         self._view = view
 
     @property
     def func_name(self):
-        """
-        This is just a lame hack to get decent debug info from the lame default
-        handler behaviour
+        """This is just a lame hack to get decent debug info from the lame
+        default handler behaviour.
         """
         name = repr(self.view)
         m = view_repr_pat.search(name)
@@ -54,6 +53,10 @@ class LazyView(object):
 
     @property
     def view(self):
+        """Return and cache the view from string or view class/function. Note
+        that in the case of a view class that this is not an instance but only
+        the class, instansiation will be done in ``__call__`` method.
+        """
         if not hasattr(self, '_view_cache'):
             if isinstance(self._view, basestring):
                 self._view_cache = get_view(self._view)
@@ -63,6 +66,12 @@ class LazyView(object):
         return self._view_cache
 
     def __call__(self, request, *args, **kwargs):
+        """In case of the wrapped view being determined as a class (that it has
+        a dispatch attribute) we return an instance of the class with all view
+        arguments passed to the dispatch method. The case of a view function
+        things are much simpler, we just call the view function with the view
+        arguments.
+        """
         if hasattr(self.view, 'dispatch'):
             return self.view().dispatch(request, *args, **kwargs)
         elif callable(self.view):
@@ -74,6 +83,9 @@ class LazyView(object):
 
 class RegexURLPattern(urlresolvers.RegexURLPattern):
     def __init__(self, regex, callback, default_args=None, name=None):
+        """We just changed the way the callback references are set compared to
+        ``django.core.urlresolvers.RegexURLPattern.__init__``.
+        """
         self.regex = re.compile(regex, re.UNICODE)
         self._callback = callback
         self.default_args = default_args or {}
@@ -81,6 +93,10 @@ class RegexURLPattern(urlresolvers.RegexURLPattern):
 
     @property
     def callback(self):
+        """This method is a little different from the default
+        ``django.core.urlresolvers.RegexURLPattern.callback`` in that we return
+        the callback wrapped in ``LazyView``.
+        """
         if not hasattr(self, '_callback_cache'):
             try:
                 self._callback_cache = LazyView(self._callback)
@@ -90,6 +106,7 @@ class RegexURLPattern(urlresolvers.RegexURLPattern):
 
 
 def include(arg, namespace=None, app_name=None):
+    """Used to include another urls pattern file"""
     if isinstance(arg, tuple):
         # callable returning a namespace hint
         if namespace:
@@ -105,6 +122,7 @@ def include(arg, namespace=None, app_name=None):
 
 
 def patterns(prefix, *args):
+    """Container for url regexp patterns"""
     pattern_list = []
     for t in args:
         if isinstance(t, (list, tuple)):
@@ -116,6 +134,7 @@ def patterns(prefix, *args):
 
 
 def url(regex, view, kwargs=None, name=None, prefix=''):
+    """sets up a regexp pattern for url processing"""
     if isinstance(view, (list, tuple)):
         # For include(...) processing.
         urlconf_module, app_name, namespace = view
