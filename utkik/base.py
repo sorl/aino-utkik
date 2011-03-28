@@ -22,7 +22,7 @@ class BaseView(object):
     - Source should be easy to follow and encourage this for implementing
       subclasses if possible.
 
-    - Keep methods short and provide useful hooks for subclassing.
+    - Keep methods short and provide useful hooks for sub classing.
 
     - Embrace the instance and don't pass request nor context around.
 
@@ -35,14 +35,14 @@ class BaseView(object):
     c = None # c is for context
     template = None # template to render to
 
-    # keyword aruments for django.shortcuts.render
+    # keyword arguments for django.shortcuts.render
     content_type = None
     status = None
     context_instance = None
     current_app = None
 
     def __init__(self):
-        """All we do here is to instansiate the Context class"""
+        """All we do here is to instantiate the Context class"""
         self.c = Context()
 
     def dispatch(self, request, *args, **kwargs):

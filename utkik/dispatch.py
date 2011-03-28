@@ -34,8 +34,8 @@ get_view = memoize(get_view, _view_cache, 1)
 
 
 class LazyView(object):
-    """Lazy wrapper for a view function or class. This is what the django
-    handler will be calling.
+    """Lazy import wrapper for a view function or class. This is what the
+    Django handler will be calling.
     """
     def __init__(self, view):
         self._view = view
@@ -54,8 +54,8 @@ class LazyView(object):
     @property
     def view(self):
         """Return and cache the view from string or view class/function. Note
-        that in the case of a view class that this is not an instance but only
-        the class, instansiation will be done in ``__call__`` method.
+        that in the case of a view class that this is not an instance but the
+        class, instantiation will be done in ``__call__`` method.
         """
         if not hasattr(self, '_view_cache'):
             if isinstance(self._view, basestring):
