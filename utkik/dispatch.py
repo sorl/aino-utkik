@@ -39,6 +39,7 @@ class LazyView(object):
     """
     def __init__(self, view):
         self._view = view
+        self._view_cache = None
 
     @property
     def func_name(self):
@@ -57,7 +58,7 @@ class LazyView(object):
         that in the case of a view class that this is not an instance but the
         class, instantiation will be done in ``__call__`` method.
         """
-        if not hasattr(self, '_view_cache'):
+        if self._view_cache is None:
             if isinstance(self._view, basestring):
                 self._view_cache = get_view(self._view)
             else:
@@ -67,10 +68,10 @@ class LazyView(object):
 
     def __call__(self, request, *args, **kwargs):
         """In case of the wrapped view being determined as a class (that it has
-        a dispatch attribute) we return an instance of the class with all view
-        arguments passed to the dispatch method. The case of a view function
-        things are much simpler, we just call the view function with the view
-        arguments.
+        a dispatch attribute) we return a new instance of the class with all
+        view arguments passed to the dispatch method. The case of a view
+        function things are much simpler, we just call the view function with
+        the view arguments.
         """
         if hasattr(self.view, 'dispatch'):
             return self.view().dispatch(request, *args, **kwargs)
@@ -88,6 +89,7 @@ class RegexURLPattern(urlresolvers.RegexURLPattern):
         """
         self.regex = re.compile(regex, re.UNICODE)
         self._callback = callback
+        self._callback_cache = None
         self.default_args = default_args or {}
         self.name = name
 
@@ -97,7 +99,7 @@ class RegexURLPattern(urlresolvers.RegexURLPattern):
         ``django.core.urlresolvers.RegexURLPattern.callback`` in that we return
         the callback wrapped in ``LazyView``.
         """
-        if not hasattr(self, '_callback_cache'):
+        if self._callback_cache is None:
             try:
                 self._callback_cache = LazyView(self._callback)
             except Exception, e:

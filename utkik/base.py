@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.utils.translation import ugettext_lazy as _
 
 
 class ViewException(Exception):
@@ -44,6 +45,7 @@ class BaseView(object):
     def __init__(self):
         """All we do here is to instantiate the Context class"""
         self.c = Context()
+        self.request = None
 
     def dispatch(self, request, *args, **kwargs):
         """View entry point. The utkik dispatcher will create a new instance of
