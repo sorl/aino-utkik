@@ -63,6 +63,7 @@ class LazyView(object):
                 self._view_cache = get_view(self._view)
             else:
                 self._view_cache = self._view
+            # this is our first chance to update the wrapper
             update_wrapper(self, self._view_cache)
         return self._view_cache
 
