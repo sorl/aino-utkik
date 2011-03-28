@@ -1,5 +1,5 @@
 aino-utkik
 ==========
 
-Clean and simple class based views for Django
+Small, clean code with a lazy view dispatcher and class based views for Django.
 

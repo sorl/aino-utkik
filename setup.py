@@ -3,8 +3,8 @@ from setuptools import setup, find_packages
 
 setup(
     name='aino-utkik',
-    version='0.1.1',
-    description='Clean and simple class based views for Django',
+    version='0.1.2',
+    description='Small, clean code with a lazy view dispatcher and class based views for Django.',
     long_description=open('README.rst').read(),
     author='Mikko Hellsing',
     author_email='mikko@aino.se',

@@ -10,26 +10,23 @@ __all__ = ['handler404', 'handler500', 'include', 'patterns', 'url']
 
 handler404 = 'django.views.defaults.page_not_found'
 handler500 = 'django.views.defaults.server_error'
-_view_cache = {}
 view_repr_pat = re.compile(r"\.(\w+)'>$")
+_view_cache = {}
 
 
 def get_view(name):
     """
-    Import and returns a view from sting
+    Import and returns a view from string
     """
     mod_name, attr = name.rsplit('.', 1)
-    try:
-        mod = import_module(mod_name)
-        return getattr(mod, attr)
-    except (ImportError, AttributeError), e:
-        if not mod_name.endswith('.views'):
-            try:
-                mod = import_module(mod_name + '.views')
-                return getattr(mod, attr)
-            except Exception:
-                pass
-        raise e # original error
+    if not mod_name.endswith('.views'):
+        try:
+            mod = import_module(mod_name + '.views')
+            return getattr(mod, attr)
+        except Exception:
+            pass
+    mod = import_module(mod_name)
+    return getattr(mod, attr)
 get_view = memoize(get_view, _view_cache, 1)
 
 
