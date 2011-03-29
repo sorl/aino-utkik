@@ -296,8 +296,7 @@ TV::
             from ``django.shortcuts.render`` function. This is called from
             ``self.get_response`` if the handler does not return a response. There
             is not much going on in this method, we make sure there is a template
-            defined, then we render the context while adding some keyword arguments
-            to the render function.
+            defined, then we render that with the context.
             """
             if not self.template:
                 raise ViewException(
