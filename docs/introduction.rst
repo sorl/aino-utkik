@@ -135,7 +135,7 @@ generic views certainly does some of these things but unfortunately some out
 right not. This is just speaking from a general class based view point not
 taking the generic part into account. Beware that this means I am not totally
 fair since the generic views will have problems to share my goals with the other
-goals set for them.
+goals set for them. So how does Django 1.3 class-based generic views stack up?
 
     1. Catch bad requests and return a proper error code.
 
