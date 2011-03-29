@@ -11,7 +11,7 @@ Example::
     from utkik.dispatch import *
 
     urlpatterns = patterns('',
-        (r'^(?<slug>[-\w]+)/$', 'news.NewsDetailView'),
+        (r'^(?P<slug>[-\w]+)/$', 'news.NewsDetailView'),
         (r'^$', 'news.NewsListView'),
     )
 
