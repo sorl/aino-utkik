@@ -239,12 +239,11 @@ TV::
 
         allowed_methods = ['GET', 'POST'] # allowed HTTP methods
         requires_ajax = False # force ajax
-        c = None # c is for context
         template = None # template to render to
 
         def __init__(self):
             """All we do here is to instantiate the Context class"""
-            self.c = Context()
+            self.c = Context() # c is for context
             self.request = None
 
         def dispatch(self, request, *args, **kwargs):
