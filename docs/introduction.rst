@@ -103,7 +103,7 @@ So how can we achieve something like this?
        function.
     3. Change the handler to not just accept a callable in addition to #2.
 
-As for changing the handler, let's just say that the I rather not. I figured #3
+As for changing the handler, let's just say that I rather not. I figured #3
 would be the best solution but that is more work than #2, did I say I was lazy?
 ``utkik.dispatch.url`` is class based view aware. The modification was not very
 big nor hard, have a look in the source code. To outline the basic idea, we
