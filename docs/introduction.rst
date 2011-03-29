@@ -16,7 +16,7 @@ to completely rewrite it, that's great right? For example::
             raise NotImplemented
 
         def do_something_useful(self):
-            qs = self.get_queryset(self)
+            qs = self.get_queryset()
             ...
 
     class MyView(MyBaseView):
