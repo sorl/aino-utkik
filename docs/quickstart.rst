@@ -104,19 +104,7 @@ Lest bake a simple view from all this::
             self.c.news = get_object_or_404(News.objects, slug=slug)
 
 That is all there is to it! You are not returning anything from the handler and
-thus letting ``self.render`` do the work. There are a few other attributes on
-the class that might be of some interest::
-
-    allowed_methods = ['GET', 'POST'] # allowed HTTP methods
-    requires_ajax = False # force ajax
-    c = None # c is for context
-    template = None # template to render to
-
-    # keyword arguments for django.shortcuts.render
-    content_type = None
-    status = None
-    context_instance = None
-    current_app = None
+thus letting ``self.render`` do the work.
 
 
 For more please :ref:`read the code <whoami>` and see the :ref:`examples <compare>`.

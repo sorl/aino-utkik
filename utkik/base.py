@@ -36,12 +36,6 @@ class BaseView(object):
     c = None # c is for context
     template = None # template to render to
 
-    # keyword arguments for django.shortcuts.render
-    content_type = None
-    status = None
-    context_instance = None
-    current_app = None
-
     def __init__(self):
         """All we do here is to instantiate the Context class"""
         self.c = Context()
@@ -103,12 +97,5 @@ class BaseView(object):
             raise ViewException(
                 _('%s does not define a template to render to.') % self
                 )
-        params = {
-            'content_type': self.content_type,
-            'status': self.status,
-            'context_instance': self.context_instance,
-            'current_app': self.current_app,
-        }
-        params = dict([(k. v) for k, v in params.iteritems() if v is not None])
-        return render(self.request, self.template, self.get_context(), **params)
+        return render(self.request, self.template, self.get_context())
 
