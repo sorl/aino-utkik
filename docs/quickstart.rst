@@ -41,7 +41,7 @@ may reference it as follows::
     from utkik.dispatch import *
 
     urlpatterns = patterns('',
-        (r'^$', 'pages.Home'),
+        (r'^$', 'myapp.Home'),
     )
 
 Alternatively you can reference it with a more accurate string. You can always
@@ -50,7 +50,7 @@ reference a class based view even if it's not in ``INSTALLED_APPS`` this way::
     from utkik.dispatch import *
 
     urlpatterns = patterns('',
-        (r'^$', 'pages.views.Home'),
+        (r'^$', 'myapp.views.Home'),
     )
 
 
