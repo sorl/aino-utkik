@@ -123,11 +123,11 @@ The following are simple, quite common views from a real world application.
 
 
     urlpatterns = patterns('',
+        url(r'^min-sida/$', ArtistMyPage.as_view(), name='artist_mypage'),
         url(r'^artister/$', MoreArtists.as_view(), name='artist_more'),
         url(r'^artister/sok/$', ArtistSearch.as_view(), name='artist_search'),
         url(r'^artister/(?P<slug>[-\w]+)/$', ArtistList.as_view(), name='artist_genre_list'),
         url(r'^artister/(?P<slug>[-\w]+)/(?P<tag>.*)/$', ArtistTagList.as_view(), name='artist_genre_tag_list'),
-        url(r'^min-sida/$', ArtistMyPage.as_view(), name='artist_mypage'),
         url(r'^(?P<slug>[-\w]+)/$', ArtistDetail.as_view(), name='artist_detail'),
     )
 
@@ -137,8 +137,6 @@ The following are simple, quite common views from a real world application.
 
 
     urlpatterns = patterns('',
-        url(r'^logga-in/$', 'artists.ArtistLogin', name='login'),
-        url(r'^logga-ut/$', 'artists.ArtistLogout', name='logout'),
         url(r'^min-sida/$', 'artists.ArtistMyPage', name='artist_mypage'),
         url(r'^artister/$', 'artists.MoreArtists', name='artist_more'),
         url(r'^artister/sok/$', 'artists.ArtistSearch', name='artist_search'),
