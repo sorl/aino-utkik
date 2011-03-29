@@ -97,19 +97,21 @@ python is it? This would solve all of the things listed above:
 So how can we achieve something like this?
 
     1. If we are good with using ``myapp.views.MyView`` then we can hack
-       something together using metaclasses and what not in the view class.
+       something together using metaclasses and what not in the view class. Or
+       we can change the handler.
     2. We change the behaviour of the ``django.conf.urls.defaults.url``
        function.
     3. Change the handler to not just accept a callable in addition to #2.
 
-I figured #3 would be the best solution but that is more work than #2, did I say
-I was lazy? ``utkik.dispatch.url`` is class based view aware. The modification
-was not very big nor hard, have a look in the source code. To outline the basic
-idea, we create a class called ``LazyView`` that wraps the view, be it a class
-view or a function view string notated or not and when that class instance is
-called (``__call__``) on from the django handler it will either return the view
-function call or create a new instance of the class view and calling its entry point
-(dispatch).
+As for changing the handler, let's just say that the I rather not. I figured #3
+would be the best solution but that is more work than #2, did I say I was lazy?
+``utkik.dispatch.url`` is class based view aware. The modification was not very
+big nor hard, have a look in the source code. To outline the basic idea, we
+create a class called ``LazyView`` that wraps the view, be it a class view or a
+function view string notated or not and when that class instance is called
+(``__call__``) on from the django handler it will either return the view
+function call or create a new instance of the class view and calling its entry
+point (dispatch).
 
 
 I can't stop
