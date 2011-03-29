@@ -1,5 +1,6 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -82,15 +83,12 @@ class BaseView(object):
 
     def render(self):
         """
-        Renders ``self.get_context()`` to ``self.template`` using the shortcut
-        from ``django.shortcuts.render`` function. This is called from
-        ``self.get_response`` if the handler does not return a response. There
-        is not much going on in this method, we make sure there is a template
-        defined, then we render that with the context.
+        Renders ``self.get_context()`` to ``self.template``. This is called from
+        ``self.get_response`` if the handler does not return a response.
         """
         if not self.template:
             raise ViewException(
-                _('%s does not define a template to render to.') % self
-                )
-        return render(self.request, self.template, self.get_context())
+                _('%s does not define a template to render to.') % self)
+        return render_to_response(
+            self.template, self.get_context(), RequestContext(self.request))
 
