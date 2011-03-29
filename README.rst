@@ -27,9 +27,9 @@ Example::
             self.c.news = get_object_or_404(News.objects, slug=slug)
 
 
-    class NewsDetailView(BaseView):
+    class NewsListView(BaseView):
         template = 'news/news_list.html'
 
-        def get(self, slug):
+        def get(self):
             self.c.news_list = News.objects.all()
 
