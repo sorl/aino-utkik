@@ -94,11 +94,12 @@ python is it? This would solve all of the things listed above:
     2. We don't need to do all those imports into urls.py
     3. Less writing is good as long as it is explicit.
 
-So how can we achieve something this?
+So how can we achieve something like this?
 
     1. If we are good with using ``myapp.views.MyView`` then we can hack
        something together using metaclasses and what not in the view class.
-    2. We change the behaviour of the ``django.core.urlresolvers.url`` function.
+    2. We change the behaviour of the ``django.conf.urls.defaults.url``
+       function.
     3. Change the handler to not just accept a callable in addition to #2.
 
 I figured #3 would be the best solution but that is more work than #2, did I say
@@ -226,7 +227,7 @@ TV::
         - Building context for rendering should be simple.
 
         - Source should be easy to follow and encourage this for implementing
-        subclasses if possible.
+          subclasses if possible.
 
         - Keep methods short and provide useful hooks for sub classing.
 
