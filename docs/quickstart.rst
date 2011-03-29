@@ -83,8 +83,7 @@ start something like::
 At the end of the handler you can either return a valid ``HttpResponse`` or you
 don't return anything. If you don't return anything the ``self.render`` method
 will be called. This method essentially renders ``self.template`` with
-``self.get_context`` as context using ``django.shortcuts.render`` and returns
-the result.
+``self.get_context`` as context and returns the result.
 
 But wait there is more! In your view you can reference an object
 representing the context as ``self.c``. You can set stuff to the context as
