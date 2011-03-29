@@ -273,10 +273,7 @@ TV::
             based on the HTTP method call. If this handler does not return a
             response, we will simply call and return ``self.render``.
             """
-            response = self.get_handler()(*args, **kwargs)
-            if response is None:
-                return self.render()
-            return response
+            return self.get_handler()(*args, **kwargs) or self.render()
 
         def get_handler(self):
             """Return a suitable handler. You can override this for example if you

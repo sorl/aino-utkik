@@ -33,12 +33,11 @@ class BaseView(object):
 
     allowed_methods = ['GET', 'POST'] # allowed HTTP methods
     requires_ajax = False # force ajax
-    c = None # c is for context
     template = None # template to render to
 
     def __init__(self):
         """All we do here is to instantiate the Context class"""
-        self.c = Context()
+        self.c = Context() # c is for context
         self.request = None
 
     def dispatch(self, request, *args, **kwargs):
@@ -67,10 +66,7 @@ class BaseView(object):
         based on the HTTP method call. If this handler does not return a
         response, we will simply call and return ``self.render``.
         """
-        response = self.get_handler()(*args, **kwargs)
-        if response is None:
-            return self.render()
-        return response
+        return self.get_handler()(*args, **kwargs) or self.render()
 
     def get_handler(self):
         """Return a suitable handler. You can override this for example if you
