@@ -2,6 +2,7 @@ import re
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core import urlresolvers
+from django.utils.functional import update_wrapper
 from utkik.utils import import_string, cached_property
 
 
@@ -17,9 +18,7 @@ class View(object):
 
     def __init__(self, view):
         self.view = view
-        self.__module__ = view.__module__
-        self.__name__ = view.__name__
-        self.__doc__ = view.__doc_
+        update_wrapper(self, view)
 
     @property
     def func_name(self):

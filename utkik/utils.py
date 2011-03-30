@@ -1,4 +1,5 @@
 import sys
+from django.utils.functional import update_wrapper
 
 
 class _Missing(object):
@@ -80,10 +81,8 @@ class cached_property(object):
     # in __get__ for manual invocation.
 
     def __init__(self, func):
-        self.__name__ = func.__name__
-        self.__module__ = func.__module__
-        self.__doc__ = func.__doc__
         self.func = func
+        update_wrapper(self, func)
 
     def __get__(self, obj, owner):
         if obj is None:
