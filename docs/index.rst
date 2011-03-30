@@ -11,4 +11,5 @@ common usage, readability and convienience.
    quickstart
    introduction
    compare
+   reference
 
