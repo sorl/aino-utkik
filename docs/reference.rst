@@ -10,8 +10,8 @@ BaseView
 attributes
 ----------
 
-allowed_methods
-^^^^^^^^^^^^^^^
+methods
+^^^^^^^
 This should contain a list of allowed HTTP methods for the view. The names
 should be upper-case just as they are named in the HTTP spcification. If the
 class has a method of the same name but in lower case this will be called to

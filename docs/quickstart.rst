@@ -6,7 +6,7 @@ Quickstart
 Requirements, Installation & Configuration
 ------------------------------------------
 
-You will need Python 2.4+ and Django 1.2+
+You will need at least Python 2.4+ and Django 1.0+
 
 Firstly install the package from pypi::
 
@@ -66,9 +66,9 @@ try to call a get method on the class and a POST method a post and so on. A
 method is allowed only if the class has a corresponding lower case named
 attribute on the class. But because not everyone keeps those method names in
 their head there is an additional attribute in the class that controls if the
-method should be allowed or not and that is ``allowed_methods``. By default this
-is set to ``['GET', 'POST']`` thus allowing only GET and POST. If you want to
-allow anything else you first have to add that method name to this list and then
+method should be allowed or not and that is ``methods``. By default this is set
+to ``['GET', 'POST']`` thus allowing only GET and POST. If you want to allow
+anything else you first have to add that method name to this list and then
 create a method with the lower case name on the class.
 
 So basically you do all your stuff in the handler or conduct it from there, for
@@ -92,13 +92,18 @@ follows::
     self.c.news = get_object_or_404(News.objects, slug=slug)
 
 The ``self.get_context`` by default returns this context object as a dictionary.
-Lest bake a simple view from all this::
+Adding a decorator is a no brainer too, just add it to  the ``self.decorators``
+list.
 
+Now, lets bake a simple view from all this::
+
+    from django.contrib.auth.decorators import login_required
     from utkik import BaseView
     from news.models import News
 
     class NewsView(BaseView):
         template = 'news/news_detail.html'
+        decorators = [ login_required ]
 
         def get(self, slug):
             self.c.news = get_object_or_404(News.objects, slug=slug)

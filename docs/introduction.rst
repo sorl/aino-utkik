@@ -73,6 +73,7 @@ This works fine except for a few things:
     2. The urls.py can get really cluttered with view imports.
     3. Writing ``.as_view()`` that many times is really boring and is a weird
        redundant suffix.
+    4. We add unnecessary boilerplate code to the views.
 
 
 The future
@@ -93,10 +94,12 @@ python is it? This would solve all of the things listed above:
        Getting a proper traceback in case something goes wrong, well hopefully.
     2. We don't need to do all those imports into urls.py
     3. Less writing is good as long as it is explicit.
+    4. Writing a view is as simple as subclassing object and adding a dispatch
+       method.
 
 So how can we achieve something like this?
 
-    1. If we are good with using ``myapp.views.MyView`` then we can hack
+    1. If we are good with using ``"myapp.views.MyView"`` then we can hack
        something together using metaclasses and what not in the view class. Or
        we can change the handler.
     2. We change the behaviour of the ``django.conf.urls.defaults.url``
@@ -107,11 +110,10 @@ As for changing the handler, let's just say that I rather not. I figured #3
 would be the best solution but that is more work than #2, did I say I was lazy?
 ``utkik.dispatch.url`` is class based view aware. The modification was not very
 big nor hard, have a look in the source code. To outline the basic idea, we
-create a class called ``LazyView`` that wraps the view, be it a class view or a
-function view string notated or not and when that class instance is called
-(``__call__``) on from the django handler it will either return the view
-function call or create a new instance of the class view and calling its entry
-point (dispatch).
+create a class that wraps the view, be it a class view or a function view string
+notated or not and when that class instance is called (``__call__``) on from the
+django handler it will either return the view function call or create a new
+instance of the class view and calling its entry point (dispatch).
 
 
 I can't stop
@@ -128,8 +130,8 @@ like to see:
     5. Subclasses should be easy to read and follow.
     6. They should be very convenient but allow for special cases without
        breaking a sweat.
-    7. Embrace the instance state when you need to, now that you have it.
-    8. Reading the source code should be easy.
+    7. Reading the source code should be easy.
+    8. Applying decorators should be easy and inheritable.
 
 Of course I am just listing all those things that match what my current
 implementation has, I just do that to make me look good. Django 1.3 class based
@@ -181,23 +183,23 @@ goals set for them. So how does Django 1.3 class-based generic views stack up?
        you managed to get that class doing what you wanted you realize that it
        is very hard to follow as well, let alone remember.
 
-    7. Embrace the instance state when you need to, now that you have it.
-
-       Why is request the first argument of the handlers? First you read in the
-       dispatch method ``self.request = request`` and then ``handler(request,
-       *args, **kwargs)``. Maybe I am missing something here but this is just
-       confusing. To me it should read: ``handler(*args, **kwargs)`` and the
-       first argument in the handler should not be request but the arguments and
-       Keyword arguments kwargs parsed from urls. Arguments and Keyword
-       arguments are stored in the instance as ``self.args`` and
-       ``self.kwargs``, Personally I have a problem with the naming and secondly
-       when do we need to access those in anything but the handlers? If we find
-       cases to reference those attributes it will be very hard to understand
-       what is happening.
-
-    8. Reading the source code should be easy.
+    7. Reading the source code should be easy.
     
        It is just not because of all the generalizations and mixins.
+
+    8. Applying decorators should be easy and inheritable.
+
+       You can do this in two ways basically, urls or views::
+            
+           # urls.py (not inheritable)
+           login_required(MyView.as_view())
+
+           # views.py
+           @method_decorator(login_required)
+           def dispatch(self, *args, **kwargs):
+               return super(MyView, self).dispatch(*args, **kwargs)
+
+       None of which are I think is very nice.
 
 .. _whoami:
 

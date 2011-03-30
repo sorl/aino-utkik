@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from utkik.decorators import requires_ajax, allowed_methods, decorate
+from utkik.decorators import requires_ajax, allowed_methods, remove_request
 
 
 class ViewException(Exception):
@@ -33,10 +33,10 @@ class BaseView(object):
       use-cases.
     """
 
-    allowed_methods = ['GET', 'POST'] # allowed HTTP methods
+    methods = ['GET', 'POST'] # allowed HTTP methods
     requires_ajax = False # force ajax
-    template = None # template to render to
     decorators = [] # a list of decorators applied in reverse order
+    template = None # template to render to
 
     def __init__(self):
         """All we do here is to instantiate the Context class"""
@@ -46,35 +46,28 @@ class BaseView(object):
     def dispatch(self, request, *args, **kwargs):
         """View entry point. The utkik dispatcher will create a new instance of
         the current class and call this method when the Django handler makes a
-        call to the view. We get all the decorators using the list returned
-        ``self._get_decorators`` and decorate the ``self.get_response`` method
-        with those decorators.
+        call to the view.
         """
         self.request = request
-        return decorate(self._get_decorators())(self.get_response)(
-            request, *args, **kwargs
-            )
+        return self.decorate(self.get_response)(request, *args, **kwargs)
 
-    def _get_decorators(self):
-        """Returns a list of decorators, The first part of the list are
-        decorators in ``self.decorators`` which are the user defined decorators.
-        The second part of this list are decorators that enforces ajax if
-        ``self.requires_ajax`` is ``True`` and a decorator that makes sure the
-        current request HTTP method is allowed.
+    def decorate(self, f):
+        """Decorate function f with decorators from ``self.decorators`` and
+        decorators based on ``self.requires_ajax`` and ``self.methods``.
         """
-        decorators = list(self.decorators)
+        f = remove_request(f) # remove request arg. for get_response method
+        for d in reversed(self.decorators):
+            f = d(f)
         if self.requires_ajax:
-            decorators.append(requires_ajax)
-        methods = [m for m in self.allowed_methods if hasattr(self, m.lower())]
-        decorators.append(allowed_methods(methods))
-        return decorators
+            f = requires_ajax(f)
+        methods = [m for m in self.methods if hasattr(self, m.lower())]
+        return allowed_methods(methods)(f)
 
-    def get_response(self, request, *args, **kwargs):
+    def get_response(self, *args, **kwargs):
         """Returns the response from a successful request to the view. In it's
         default implementation it will direct to a suitable handler method
         based on the HTTP method call. If this handler does not return a
-        response, we will simply call and return ``self.render``. Request is
-        only passed in here for decorator compatibility reasons.
+        response, we will simply call and return ``self.render``.
         """
         return self.get_handler()(*args, **kwargs) or self.render()
 

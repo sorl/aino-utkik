@@ -24,11 +24,10 @@ def allowed_methods(methods):
     return outer
 
 
-def decorate(decorators):
-    """A decorator that applies a list of decorators in reverse order"""
-    def decorator(f):
-        for d in reversed(decorators):
-            f = d(f)
-        return f
-    return decorator
+def remove_request(f):
+    """Removes the request argument"""
+    @wraps(f)
+    def wrapper(request, *args, **kwargs):
+        return f(*args, **kwargs)
+    return wrapper
 
