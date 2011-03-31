@@ -62,9 +62,10 @@ class View(object):
 
     def get_response(self, request, *args, **kwargs):
         """Returns the response from a successful request to the view. In it's
-        default implementation it will direct to a suitable handler method
-        based on the HTTP method call. If this handler does not return a
-        response, we will simply call and return ``self.render``.
+        default implementation it will direct to a suitable handler method based
+        on the HTTP method call. If this handler does not return a response, we
+        will simply call and return ``self.render``. Request is just passed in
+        here for decorator compatibilty reasons.
         """
         return self.get_handler()(*args, **kwargs) or self.render()
 
@@ -81,7 +82,7 @@ class View(object):
         return self.c.__dict__
 
     def get_template(self):
-        """Returns a template for ``self.render`` method, this is mostly to for
+        """Returns a template for ``self.render`` method, this is mostly for
         having an alternative template for ajax calls.
         """
         if self.request.is_ajax() and self.ajax_template:
