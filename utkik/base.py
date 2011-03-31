@@ -52,8 +52,12 @@ class View(object):
         return self._decorate(self.get_response)(request, *args, **kwargs)
 
     def _decorate(self, f):
-        """Decorate function f with decorators from ``self.decorators`` and
-        decorators based on ``self.methods``.
+        """This is meant to decorate ``self.get_response`` with
+        ``self.decorators`` much like you would decorate a view function (if you
+        remember that era). There is one decorator automatically added here and
+        that is the ``http_methods`` computed decorator that uses
+        ``self.methods`` attribute and avalable handlers to define what methods
+        are allowed.
         """
         for d in reversed(self.decorators):
             f = d(f)
