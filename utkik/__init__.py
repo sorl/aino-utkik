@@ -1,1 +1,1 @@
-from utkik.base import BaseView
+from utkik.base import View

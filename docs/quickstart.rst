@@ -34,7 +34,7 @@ Dispatcher
 ^^^^^^^^^^
 Now you are ready to use the utkik dispatcher. This allows you to reference a
 class based view based from Django 1.3 Class-based generic views or
-``utkik.BaseView`` as a string in your urls.py (or any other class based view
+``utkik.View`` as a string in your urls.py (or any other class based view
 that has an entry point method called dispatch). Assuming that your class
 resides in ``myapp.views.Home`` and that ``myapp`` is in ``INSTALLED_APPS`` you
 may reference it as follows::
@@ -55,8 +55,8 @@ reference a class based view even if it's not in ``INSTALLED_APPS`` this way::
     )
 
 
-utkik.BaseView
-^^^^^^^^^^^^^^
+utkik.View
+^^^^^^^^^^
 I will describe the main ideas here and if you have the time please look through
 the :ref:`source code <whoami>`, it is really small.
 
@@ -103,7 +103,7 @@ will apply them to the handler in reverse order. Example::
     from django.http import HttpResponse
     from functional import wraps
     from utkik.decorators import handler_decorators, require_ajax
-    from utkik import BaseView
+    from utkik import View
 
     def mydecorator(f):
         """function view decorator"""
@@ -114,7 +114,7 @@ will apply them to the handler in reverse order. Example::
             return f(request, *args, **kwargs)
         return wrapper
 
-    class MyView(BaseView):
+    class MyView(View):
         template = 'home.html'
 
         @handler_decorators(login_required, mydecorator)
@@ -130,10 +130,10 @@ will apply them to the handler in reverse order. Example::
 Now, lets bake another simple view example::
 
     from django.contrib.auth.decorators import login_required
-    from utkik import BaseView
+    from utkik import View
     from news.models import News
 
-    class NewsView(BaseView):
+    class NewsView(View):
         template = 'news/news_detail.html'
         decorators = [ login_required ]
 

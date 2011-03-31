@@ -13,7 +13,7 @@ handler404 = 'django.views.defaults.page_not_found'
 handler500 = 'django.views.defaults.server_error'
 
 
-class View(object):
+class ViewWrapper(object):
     """A view wrapper that makes function and class based views callable"""
 
     def __init__(self, view):
@@ -42,7 +42,7 @@ class View(object):
             'class.' % (self.view.__module__, self.view.__name__)
             )
 
-class LazyView(View):
+class LazyViewWrapper(ViewWrapper):
     """Lazy import wrapper for a view function or class."""
 
     def __init__(self, import_name):
@@ -78,12 +78,12 @@ class RegexURLPattern(urlresolvers.RegexURLPattern):
     def callback(self):
         """This method is a little different from the default
         ``django.core.urlresolvers.RegexURLPattern.callback`` in that we return
-        the callback wrapped in a ``View`` or ``LazyView``.
+        the callback wrapped in a ``ViewWrapper`` or ``LazyViewWrapper``.
         """
         try:
             if isinstance(self._callback, basestring):
-                return LazyView(self._callback)
-            return View(self._callback)
+                return LazyViewWrapper(self._callback)
+            return ViewWrapper(self._callback)
         except Exception, e:
             raise urlresolvers.ViewDoesNotExist(e)
 

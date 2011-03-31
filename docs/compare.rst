@@ -6,7 +6,7 @@ Comparing implementations
 The following are simple, quite common views from a real world application.
 
 .. |cbv| replace:: Django 1.3 Class-based generic views
-.. |utkik| replace:: utkik.BaseView
+.. |utkik| replace:: utkik.View
 
 |cbv|::
 
@@ -16,7 +16,7 @@ The following are simple, quite common views from a real world application.
 
 |utkik|::
 
-    class ArtistDetail(BaseView):
+    class ArtistDetail(View):
         template = 'artists/artist_detail.html'
 
         def get(self, slug):
@@ -47,7 +47,7 @@ The following are simple, quite common views from a real world application.
 
 |utkik|::
 
-    class ArtistList(BaseView):
+    class ArtistList(View):
         template = 'artists/artist_list.html'
 
         def get(self, slug=None, tag=None):
@@ -75,8 +75,8 @@ The following are simple, quite common views from a real world application.
 
 |utkik|::
 
-    class MoreArtists(BaseView):
-        requires_ajax = True
+    class MoreArtists(View):
+        decorators = [ requires_ajax ]
         template = 'artists/inc/artists_in_focus.html'
 
         def get(self):
@@ -103,7 +103,7 @@ The following are simple, quite common views from a real world application.
 
 |utkik|::
 
-    class ArtistLogin(BaseView):
+    class ArtistLogin(View):
         template = 'artists/login.html'
 
         def get(self):

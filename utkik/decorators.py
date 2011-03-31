@@ -34,7 +34,7 @@ def remove_request(f):
 
 
 def handler_decorators(*decorators):
-    """Converts function decorators into a decorator for ``utkik.BaseView``
+    """Converts function decorators into a decorator for ``utkik.View``
     handlers.
     """
     def decorator(f):

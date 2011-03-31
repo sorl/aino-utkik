@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from utkik.decorators import requires_ajax, http_methods, remove_request
+from utkik.decorators import http_methods, remove_request
 
 
 class ViewException(Exception):
@@ -15,7 +15,7 @@ class ContextData(object):
     """
 
 
-class BaseView(object):
+class View(object):
     """A minimalist View base class.
 
     Goals
@@ -34,9 +34,9 @@ class BaseView(object):
     """
 
     methods = ['GET', 'POST'] # allowed HTTP methods
-    requires_ajax = False # force ajax
-    decorators = [] # a list of decorators applied in reverse order
+    decorators = [] # a list of decorators
     template = None # template to render to
+    ajax_template = None # template to render to for ajax calls
 
     def __init__(self):
         """All we do here is to instantiate the ContextData class"""
@@ -49,17 +49,15 @@ class BaseView(object):
         call to the view.
         """
         self.request = request
-        return self.decorate(self.get_response)(request, *args, **kwargs)
+        return self._decorate(self.get_response)(request, *args, **kwargs)
 
-    def decorate(self, f):
+    def _decorate(self, f):
         """Decorate function f with decorators from ``self.decorators`` and
-        decorators based on ``self.requires_ajax`` and ``self.methods``.
+        decorators based on ``self.methods``.
         """
         f = remove_request(f) # remove request arg. for get_response method
         for d in reversed(self.decorators):
             f = d(f)
-        if self.requires_ajax:
-            f = requires_ajax(f)
         methods = [m for m in self.methods if hasattr(self, m.lower())]
         return http_methods(*methods)(f)
 
@@ -83,14 +81,22 @@ class BaseView(object):
         """
         return self.c.__dict__
 
+    def get_template(self):
+        """Returns a template for ``self.render`` method, this is mostly to for
+        having an alternative template for ajax calls.
+        """
+        if self.request.is_ajax() and self.ajax_template:
+            return self.ajax_template
+        if not self.template:
+            raise ViewException(
+                _('%s does not define a template to render to.') % self)
+        return self.template
+
     def render(self):
         """
         Renders ``self.get_context()`` to ``self.template``. This is called from
         ``self.get_response`` if the handler does not return a response.
         """
-        if not self.template:
-            raise ViewException(
-                _('%s does not define a template to render to.') % self)
-        return render_to_response(
-            self.template, self.get_context(), RequestContext(self.request))
+        return render_to_response(self.get_template(), self.get_context(),
+            RequestContext(self.request))
 

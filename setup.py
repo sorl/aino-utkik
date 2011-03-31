@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='aino-utkik',
-    version='0.3.1',
+    version='0.3.2',
     description='Small, clean code with a lazy view dispatcher and class based views for Django.',
     long_description=open('README.rst').read(),
     author='Mikko Hellsing',
@@ -13,7 +13,7 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
