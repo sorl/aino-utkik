@@ -36,7 +36,6 @@ class View(object):
     methods = ['GET', 'POST'] # allowed HTTP methods
     decorators = [] # a list of decorators
     template = None # template to render to
-    ajax_template = None # template to render to for ajax calls
 
     def __init__(self):
         """All we do here is to instantiate the ContextData class"""
@@ -69,7 +68,8 @@ class View(object):
         default implementation it will direct to a suitable handler method based
         on the HTTP method call. If this handler does not return a response, we
         will simply call and return ``self.render``. Request is just passed in
-        here for decorator compatibilty reasons.
+        here for decorator compatibilty reasons, don't use it, don't get
+        confused by it, just use ``self.request``.
         """
         return self.get_handler()(*args, **kwargs) or self.render()
 
@@ -85,22 +85,15 @@ class View(object):
         """
         return self.c.__dict__
 
-    def get_template(self):
-        """Returns a template for ``self.render`` method, this is mostly for
-        having an alternative template for ajax calls.
+    def render(self, template=None):
         """
-        if self.request.is_ajax() and self.ajax_template:
-            return self.ajax_template
-        if not self.template:
-            raise ViewException(
-                _('%s does not define a template to render to.') % self)
-        return self.template
-
-    def render(self):
+        Renders ``self.get_context()`` to ``self.template`` or a template
+        argument. This is called from ``self.get_response`` if the handler does
+        not return a response.
         """
-        Renders ``self.get_context()`` to ``self.template``. This is called from
-        ``self.get_response`` if the handler does not return a response.
-        """
-        return render_to_response(self.get_template(), self.get_context(),
-            RequestContext(self.request))
+        template = template or self.template
+        if not template:
+            raise ViewException(_('Missing template to render to.'))
+        return render_to_response(
+            template, self.get_context(), RequestContext(self.request))
 
