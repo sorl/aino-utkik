@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from utkik.decorators import http_methods, remove_request
+from utkik.decorators import http_methods
 
 
 class ViewException(Exception):
@@ -55,13 +55,12 @@ class View(object):
         """Decorate function f with decorators from ``self.decorators`` and
         decorators based on ``self.methods``.
         """
-        f = remove_request(f) # remove request arg. for get_response method
         for d in reversed(self.decorators):
             f = d(f)
         methods = [m for m in self.methods if hasattr(self, m.lower())]
         return http_methods(*methods)(f)
 
-    def get_response(self, *args, **kwargs):
+    def get_response(self, request, *args, **kwargs):
         """Returns the response from a successful request to the view. In it's
         default implementation it will direct to a suitable handler method
         based on the HTTP method call. If this handler does not return a

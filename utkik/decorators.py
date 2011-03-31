@@ -25,14 +25,6 @@ def http_methods(*methods):
     return decorator
 
 
-def remove_request(f):
-    """Removes the request argument"""
-    @wraps(f)
-    def wrapper(request, *args, **kwargs):
-        return f(*args, **kwargs)
-    return wrapper
-
-
 def handler_decorators(*decorators):
     """Converts function decorators into a decorator for ``utkik.View``
     handlers.
