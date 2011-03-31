@@ -93,9 +93,41 @@ follows::
 
 The ``self.get_context`` by default returns this context object as a dictionary.
 Adding a decorator is a no brainer too, just add it to  the ``self.decorators``
-list.
+list. If you want to add a decorator for GET but not for POST, that is *a
+specific decorator per handler* you can use yet another decorator
+``utkik.decorators.handler_decorators``. This decorator accepts normal view
+function decorators like ``django.contrib.auth.decorators.login_required`` and
+will apply them to the handler in reverse order. Example::
 
-Now, lets bake a simple view from all this::
+    from django.contrib.auth.decorators import login_required
+    from django.http import HttpResponse
+    from functional import wraps
+    from utkik.decorators import handler_decorators, require_ajax
+    from utkik import BaseView
+
+    def mydecorator(f):
+        """function view decorator"""
+        @wraps(f):
+        def wrapper(request, *args, **kwargs):
+            if not request.user.email.endswith('@aino.se'):
+                return HttpResponse(status=402)
+            return f(request, *args, **kwargs)
+        return wrapper
+
+    class MyView(BaseView):
+        template = 'home.html'
+
+        @handler_decorators(login_required, mydecorator)
+        def get(self):
+            pass
+
+        @handler_decorators(require_ajax):
+        def post(self):
+            return HttpResponse('{ "message": "rock my pony" }',
+                mimetype='application/json')
+
+
+Now, lets bake another simple view example::
 
     from django.contrib.auth.decorators import login_required
     from utkik import BaseView

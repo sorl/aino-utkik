@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from utkik.decorators import requires_ajax, allowed_methods, remove_request
+from utkik.decorators import requires_ajax, http_methods, remove_request
 
 
 class ViewException(Exception):
@@ -61,7 +61,7 @@ class BaseView(object):
         if self.requires_ajax:
             f = requires_ajax(f)
         methods = [m for m in self.methods if hasattr(self, m.lower())]
-        return allowed_methods(methods)(f)
+        return http_methods(*methods)(f)
 
     def get_response(self, *args, **kwargs):
         """Returns the response from a successful request to the view. In it's
