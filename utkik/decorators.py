@@ -14,14 +14,15 @@ def requires_ajax(f):
 
 def http_methods(*methods):
     """Enforces one of the supplied HTTP methods"""
-    def outer(f):
+    def decorator(f):
         @wraps(f)
         def wrapper(request, *args, **kwargs):
             if not request.method in methods:
                 return HttpResponse(status=405)
             return f(request, *args, **kwargs)
         return wrapper
-    return outer
+    decorator.__name__ = 'http_methods'
+    return decorator
 
 
 def remove_request(f):
@@ -36,7 +37,7 @@ def handler_decorators(*decorators):
     """Converts function decorators into a decorator for ``utkik.BaseView``
     handlers.
     """
-    def outer(f):
+    def decorator(f):
         @wraps(f)
         def wrapper(self, *args, **kwargs):
             def g(request, *args, **kwargs):
@@ -45,5 +46,6 @@ def handler_decorators(*decorators):
                 g = d(g)
             return g(self.request, *args, **kwargs)
         return wrapper
-    return outer
+    decorator.__name__ = 'handler_decorators'
+    return decorator
 
