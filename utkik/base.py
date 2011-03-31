@@ -9,9 +9,9 @@ class ViewException(Exception):
     pass
 
 
-class Context(object):
+class ContextData(object):
     """This will contain attributes for context. All the attributes are later
-    collected by Context().__dict__.
+    collected by ContextData().__dict__.
     """
 
 
@@ -39,8 +39,8 @@ class BaseView(object):
     template = None # template to render to
 
     def __init__(self):
-        """All we do here is to instantiate the Context class"""
-        self.c = Context() # c is for context
+        """All we do here is to instantiate the ContextData class"""
+        self.c = ContextData() # c is for context
         self.request = None
 
     def dispatch(self, request, *args, **kwargs):
