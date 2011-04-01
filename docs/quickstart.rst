@@ -82,8 +82,8 @@ start something like::
 
 At the end of the handler you can either return a valid ``HttpResponse`` or you
 don't return anything. If you don't return anything the ``self.render`` method
-will be called. This method essentially renders ``self.template`` with
-``self.get_context`` as context and returns the result.
+will be called. This method essentially renders ``self.template_name`` with
+``self.get_context_data`` as context data and returns the result.
 
 But wait there is more! In your view you can reference an object
 representing the context as ``self.c``. You can set stuff to the context as
@@ -91,13 +91,13 @@ follows::
 
     self.c.news = get_object_or_404(News.objects, slug=slug)
 
-The ``self.get_context`` by default returns this context object as a dictionary.
-Adding a decorator is a no brainer too, just add it to  the ``self.decorators``
-list. If you want to add a decorator for GET but not for POST, that is *a
-specific decorator per handler* you can use yet another decorator
-``utkik.decorators.handler_decorators``. This decorator accepts normal view
-function decorators like ``django.contrib.auth.decorators.login_required`` and
-will apply them to the handler in reverse order. Example::
+The ``self.get_context_data`` by default returns this context object as a
+dictionary.  Adding a decorator is a no brainer too, just add it to  the
+``self.decorators`` list. If you want to add a decorator for GET but not for
+POST, that is *a specific decorator per handler* you can use yet another
+decorator ``utkik.decorators.handler_decorators``. This decorator accepts normal
+view function decorators like ``django.contrib.auth.decorators.login_required``.
+Example::
 
     from django.contrib.auth.decorators import login_required
     from django.http import HttpResponse

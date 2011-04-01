@@ -17,14 +17,13 @@ should be upper-case just as they are named in the HTTP spcification. If the
 class has a method of the same name but in lower case this will be called to
 when a request is made.
 
-template
-^^^^^^^^
-This is the template that the ``render`` method will use to render to.
-
 decorators
 ^^^^^^^^^^
-A list of decorators applied in reverse order.
+A list of decorators applied to ``get_response``.
 
+template_name
+^^^^^^^^^^^^^
+This is the template that the ``render`` method will use to render to.
 
 methods
 -------

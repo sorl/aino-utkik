@@ -155,12 +155,14 @@ goals set for them. So how does Django 1.3 class-based generic views stack up?
 
     3. Make it easy to update the current context for the template rendering.
 
-       Well it's not hard but still not quite there, there is a method called
-       ``get_context_data`` Is this where you should get all your context data?
-       In my mind that is mostly what a view does in a typical case, It collects
-       data for the context that it used to render the template with. I guess
-       this is where most of your code will end up unless you do something
-       creative.
+       Well it's not hard but still not quite there, like in ``utkik.View``
+       there is also a method called ``get_context_data`` This is probalbly
+       thought of where you should get all your context data.  In my mind that
+       is mostly what a view does in a typical case, It collects data for the
+       context that it used to render the template with. I guess this is where
+       most of your views code will end up unless you do something creative.
+       ``utkik.View`` used this method to do the final getting of data but it is
+       not intended to be where it is all collected and calculated.
 
     4. Have sensible hooks for subclassing.
 
