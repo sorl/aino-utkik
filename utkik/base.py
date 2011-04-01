@@ -74,7 +74,12 @@ class View(object):
 
         Request is just passed in here for decorator compatibility.
         """
-        return self.get_handler()(*args, **kwargs) or self.render()
+        try:
+            return self.get_handler()(*args, **kwargs) or self.render()
+        except Exception, e:
+            raise ViewException("'%s.%s.get_response' failed: %s: %s" % (
+                self.__module__, self.__class__.__name__,
+                e.__class__.__name__, e))
 
     def get_handler(self):
         """
@@ -103,11 +108,6 @@ class View(object):
         By default, this is called from :meth:`get_response` if the handler does
         not return a response.
         """
-        try:
-            return render_to_response(self.template_name,
-                self.get_context_data(), RequestContext(self.request))
-        except Exception, e:
-            raise ViewException('%s.%s failed to render. %s: %s' % (
-                self.__module__, self.__class__.__name__,
-                e.__class__.__name__, e))
+        return render_to_response(self.template_name,
+            self.get_context_data(), RequestContext(self.request))
 
