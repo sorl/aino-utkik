@@ -1,7 +1,5 @@
-from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.utils.translation import ugettext_lazy as _
 from utkik.decorators import http_methods
 
 
@@ -10,13 +8,16 @@ class ViewException(Exception):
 
 
 class ContextData(object):
-    """This will contain attributes for context. All the attributes are later
-    collected by ContextData().__dict__.
+    """
+    A container for attributes to store on the template context.
+
+    All the attributes are later collected as a dictionary via ``__dict__``.
     """
 
 
 class View(object):
-    """A minimalist View base class.
+    """
+    A minimalist View base class.
 
     Goals
     -----
@@ -32,31 +33,31 @@ class View(object):
     - Narrow the scope to most common use but without limiting less usual
       use-cases.
     """
-
     methods = ['GET', 'POST'] # allowed HTTP methods
     decorators = [] # a list of decorators
-    template = None # template to render to
+    template_name = None # template name to render to
 
     def __init__(self):
-        """All we do here is to instantiate the ContextData class"""
+        """
+        Create a :class:`ContextData` instance for the view.
+        """
         self.c = ContextData() # c is for context
         self.request = None
 
     def dispatch(self, request, *args, **kwargs):
-        """View entry point. The utkik dispatcher will create a new instance of
-        the current class and call this method when the Django handler makes a
-        call to the view.
+        """
+        View entry point.
+
+        The utkik dispatcher will create a new instance of the current class
+        and call this method when the Django handler makes a call to the view.
         """
         self.request = request
         return self._decorate(self.get_response)(request, *args, **kwargs)
 
     def _decorate(self, f):
-        """This is meant to decorate ``self.get_response`` with
-        ``self.decorators`` much like you would decorate a view function (if you
-        remember that era). There is one decorator automatically added here and
-        that is the ``http_methods`` computed decorator that uses
-        ``self.methods`` attribute and avalable handlers to define what methods
-        are allowed.
+        """
+        Decorate a function with decorators from :attr:`decorators` and
+        decorators based on :attr:`methods`.
         """
         for d in reversed(self.decorators):
             f = d(f)
@@ -64,36 +65,49 @@ class View(object):
         return http_methods(*methods)(f)
 
     def get_response(self, request, *args, **kwargs):
-        """Returns the response from a successful request to the view. In it's
-        default implementation it will direct to a suitable handler method based
-        on the HTTP method call. If this handler does not return a response, we
-        will simply call and return ``self.render``. Request is just passed in
-        here for decorator compatibilty reasons, don't use it, don't get
-        confused by it, just use ``self.request``.
+        """
+        Return the response from a successful request to the view.
+
+        Directs to a suitable handler method based on the HTTP method call.
+        If this handler does not return a response, :meth:`render` is called
+        and returned.
+
+        Request is just passed in here for decorator compatibility.
         """
         return self.get_handler()(*args, **kwargs) or self.render()
 
     def get_handler(self):
-        """Return a suitable handler. You can override this for example if you
-        want another handler for ajax calls.
+        """
+        Return the method for the current request.
+
+        Override this to change the handler method that is used for a request,
+        for example, to use an alternate handler for AJAX calls.
         """
         return getattr(self, self.request.method.lower())
 
-    def get_context(self):
-        """If you want to add some extra context or modify the current context
-        this is a good place. This method is called from ``self.render``.
+    def get_context_data(self):
+        """
+        Return a dictionary containing the context data.
+
+        Override this method to add to or modify the context data before it is
+        used to render a template.
+
+        This is called from :meth:`render`.
         """
         return self.c.__dict__
 
-    def render(self, template=None):
+    def render(self):
         """
-        Renders ``self.get_context()`` to ``self.template`` or a template
-        argument. This is called from ``self.get_response`` if the handler does
+        Renders :meth:`self.template_name` using :meth:`get_context_data`.
+
+        By default, this is called from :meth:`get_response` if the handler does
         not return a response.
         """
-        template = template or self.template
-        if not template:
-            raise ViewException(_('Missing template to render to.'))
-        return render_to_response(
-            template, self.get_context(), RequestContext(self.request))
+        try:
+            return render_to_response(self.template_name,
+                self.get_context_data(), RequestContext(self.request))
+        except Exception, e:
+            raise ViewException('%s.%s failed to render. %s: %s' % (
+                self.__module__, self.__class__.__name__,
+                e.__class__.__name__, e))
 
