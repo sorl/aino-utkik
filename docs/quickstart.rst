@@ -115,7 +115,7 @@ Example::
         return wrapper
 
     class MyView(View):
-        template = 'home.html'
+        template_name = 'home.html'
 
         @handler_decorators(login_required, mydecorator)
         def get(self):
@@ -134,7 +134,7 @@ Now, lets bake another simple view example::
     from news.models import News
 
     class NewsView(View):
-        template = 'news/news_detail.html'
+        template_name = 'news/news_detail.html'
         decorators = [ login_required ]
 
         def get(self, slug):
