@@ -21,14 +21,14 @@ Example::
     from utkik import View
 
     class NewsDetailView(View):
-        template = 'news/news_detail.html'
+        template_name = 'news/news_detail.html'
 
         def get(self, slug):
             self.c.news = get_object_or_404(News.objects, slug=slug)
 
 
     class NewsListView(View):
-        template = 'news/news_list.html'
+        template_name = 'news/news_list.html'
 
         def get(self):
             self.c.news_list = News.objects.all()
