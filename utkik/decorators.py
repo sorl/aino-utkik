@@ -25,7 +25,7 @@ def http_methods(*methods):
     return decorator
 
 
-def handler_decorators(*decorators):
+def handler_decorator(*decorators):
     """Converts function decorators into a decorator for ``utkik.View``
     handlers.
     """
@@ -38,6 +38,6 @@ def handler_decorators(*decorators):
                 g = d(g)
             return g(self.request, *args, **kwargs)
         return wrapper
-    decorator.__name__ = 'handler_decorators'
+    decorator.__name__ = 'handler_decorator'
     return decorator
 
