@@ -52,7 +52,11 @@ class View(object):
         and call this method when the Django handler makes a call to the view.
         """
         self.request = request
-        return self._decorate(self.get_response)(request, *args, **kwargs)
+        try:
+            return self._decorate(self.get_response)(request, *args, **kwargs)
+        except Exception, e:
+            raise ViewException("'%s.%s' failed: %s: %s" % (self.__module__,
+                self.__class__.__name__, e.__class__.__name__, e))
 
     def _decorate(self, f):
         """
@@ -74,12 +78,7 @@ class View(object):
 
         Request is just passed in here for decorator compatibility.
         """
-        try:
-            return self.get_handler()(*args, **kwargs) or self.render()
-        except Exception, e:
-            raise ViewException("'%s.%s.get_response' failed: %s: %s" % (
-                self.__module__, self.__class__.__name__,
-                e.__class__.__name__, e))
+        return self.get_handler()(*args, **kwargs) or self.render()
 
     def get_handler(self):
         """
