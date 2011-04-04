@@ -3,10 +3,6 @@ from django.template import RequestContext
 from utkik.decorators import http_methods
 
 
-class ViewException(Exception):
-    pass
-
-
 class ContextData(object):
     """
     A container for attributes to store on the template context.
@@ -71,6 +67,10 @@ class View(object):
         Directs to a suitable handler method based on the HTTP method call.
         If this handler does not return a response, :meth:`render` is called
         and returned.
+
+        This is where you would put code that is the same for different
+        handlers. For example if you wanted to update template context data for
+        both POST and GET methods in the same way.
 
         Request is just passed in here for decorator compatibility.
         """
