@@ -6,7 +6,7 @@ Quickstart
 Requirements, Installation & Configuration
 ------------------------------------------
 
-You will need at least Python 2.4+ and Django 1.0+
+You will need at least Python 2.5+ and Django 1.0+
 
 Firstly install the package from pypi::
 

@@ -1,5 +1,5 @@
-from functools import wraps
 from django.http import HttpResponse
+from functools import wraps
 
 
 def requires_ajax(f):

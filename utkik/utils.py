@@ -1,5 +1,5 @@
 import sys
-from django.utils.functional import update_wrapper
+from functools import update_wrapper
 
 
 class _Missing(object):

@@ -2,7 +2,7 @@ import re
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core import urlresolvers
-from django.utils.functional import update_wrapper
+from functools import update_wrapper
 from utkik.utils import import_string, cached_property
 
 
