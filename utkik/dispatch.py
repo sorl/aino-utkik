@@ -1,4 +1,5 @@
 import re
+import sys
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core import urlresolvers
@@ -14,7 +15,9 @@ handler500 = 'django.views.defaults.server_error'
 
 
 class ViewWrapper(object):
-    """A view wrapper that makes function and class based views callable"""
+    """
+    A view wrapper that makes function and class based views callable
+    """
 
     def __init__(self, view):
         self.view = view
@@ -22,28 +25,41 @@ class ViewWrapper(object):
 
     @property
     def func_name(self):
-        """This is just a lame hack to get decent debug info from the lame
-        default handler behaviour.
+        """
+        This is just a lame hack to get decent debug info from the lame default
+        handler behaviour.
         """
         return self.__name__
 
     def __call__(self, request, *args, **kwargs):
-        """In case of the wrapped view being determined as a class (that it has
+        """
+        In case of the wrapped view being determined as a class (that it has
         a dispatch attribute) we return a new instance of the class with all
         view arguments passed to the dispatch method. The case of a view
         function things are much simpler, we just call the view function with
         the view arguments.
+
+        For debugging purposes we insert some additional information that is
+        useful for view classes in the raised exception.
         """
-        if hasattr(self.view, 'dispatch'):
-            return self.view().dispatch(request, *args, **kwargs)
-        elif callable(self.view):
-            return self.view(request, *args, **kwargs)
+        try:
+            if hasattr(self.view, 'dispatch'):
+                return self.view().dispatch(request, *args, **kwargs)
+            elif callable(self.view):
+                return self.view(request, *args, **kwargs)
+        except Exception:
+            cls, e, trace = sys.exc_info()
+            msg = 'Exception in %s.%s: %s' % (
+                self.view.__module__, self.view.__name__, e)
+            raise cls(msg), None, trace
         raise ImproperlyConfigured('%s.%s does not define a view function or '
-            'class.' % (self.view.__module__, self.view.__name__)
-            )
+            'class.' % (self.view.__module__, self.view.__name__))
+
 
 class LazyViewWrapper(ViewWrapper):
-    """Lazy import wrapper for a view function or class."""
+    """
+    Lazy import wrapper for a view function or class.
+    """
 
     def __init__(self, import_name):
         module, name = import_name.rsplit('.', 1)
@@ -55,7 +71,8 @@ class LazyViewWrapper(ViewWrapper):
 
     @cached_property
     def view(self):
-        """Return and cache the view from string. Note that in the case of a
+        """
+        Return and cache the view from string. Note that in the case of a
         view class that this is not an instance but the class, instantiation
         will be done in the ``__call__`` method.
         """
@@ -66,7 +83,8 @@ class LazyViewWrapper(ViewWrapper):
 
 class RegexURLPattern(urlresolvers.RegexURLPattern):
     def __init__(self, regex, callback, default_args=None, name=None):
-        """We just changed the way the callback references are set compared to
+        """
+        We just changed the way the callback references are set compared to
         ``django.core.urlresolvers.RegexURLPattern.__init__``.
         """
         self.regex = re.compile(regex, re.UNICODE)
@@ -76,7 +94,8 @@ class RegexURLPattern(urlresolvers.RegexURLPattern):
 
     @cached_property
     def callback(self):
-        """This method is a little different from the default
+        """
+        This method is a little different from the default
         ``django.core.urlresolvers.RegexURLPattern.callback`` in that we return
         the callback wrapped in a ``ViewWrapper`` or ``LazyViewWrapper``.
         """
@@ -89,7 +108,9 @@ class RegexURLPattern(urlresolvers.RegexURLPattern):
 
 
 def include(arg, namespace=None, app_name=None):
-    """Used to include another urls pattern file"""
+    """
+    Used to include another urls pattern file
+    """
     if isinstance(arg, tuple):
         # callable returning a namespace hint
         if namespace:
@@ -105,7 +126,9 @@ def include(arg, namespace=None, app_name=None):
 
 
 def patterns(prefix, *args):
-    """Container for url regexp patterns"""
+    """
+    Container for url regexp patterns
+    """
     pattern_list = []
     for t in args:
         if isinstance(t, (list, tuple)):
@@ -117,7 +140,9 @@ def patterns(prefix, *args):
 
 
 def url(regex, view, kwargs=None, name=None, prefix=''):
-    """sets up a regexp pattern for url processing"""
+    """
+    sets up a regexp pattern for url processing
+    """
     if isinstance(view, (list, tuple)):
         # For include(...) processing.
         urlconf_module, app_name, namespace = view
