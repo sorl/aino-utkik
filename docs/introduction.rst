@@ -145,8 +145,8 @@ goals set for them. So how does Django 1.3 class-based generic views stack up?
 
        Yes, but only partially, the default behaviour is to allow every HTTP
        method if it has such a lowercase attribute of the class. I would say it
-       is a rare use-case for anything else but GET/POST, something could
-       definitely go wrong there. It does not check for ajax at all.
+       is a rare use-case for anything else but GET/POST/PUT/DELETE, something
+       could definitely go wrong there. It does not check for ajax at all.
 
     2. Render a certain template with context using very little code.
 

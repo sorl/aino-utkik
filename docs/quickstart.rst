@@ -60,16 +60,17 @@ utkik.View
 I will describe the main ideas here and if you have the time please look through
 the :ref:`source code <whoami>`, it is really small.
 
-Firstly the *handler* for an allowed request is defined as a method that has the
-same name as the HTTP request method, only lower cased. So a GET request will
-try to call a get method on the class and a POST method a post and so on. A
-method is allowed only if the class has a corresponding lower case named
+Firstly the *handler* for an allowed request is defined as a method that has
+the same name as the HTTP request method, only lower cased. So a GET request
+will try to call a get method on the class and a POST method a post and so on.
+A method is allowed only if the class has a corresponding lower case named
 attribute on the class. But because not everyone keeps those method names in
 their head there is an additional attribute in the class that controls if the
 method should be allowed or not and that is ``methods``. By default this is set
-to ``['GET', 'POST']`` thus allowing only GET and POST. If you want to allow
-anything else you first have to add that method name to this list and then
-create a method with the lower case name on the class.
+to ``['GET', 'POST' , 'PUT', 'DELETE']`` thus allowing only GET, POST, PUT and
+DELETE.  If you want to allow anything else you first have to add that method
+name to this list and then create a method with the lower case name on the
+class.
 
 So basically you do all your stuff in the handler or conduct it from there, for
 example ``MyView.get``.  The handler gets passed any additional arguments that
