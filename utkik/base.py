@@ -28,6 +28,9 @@ class View(object):
 
     - Narrow the scope to most common use but without limiting less usual
       use-cases.
+
+    - We don't like super. We want common View subclasses without the need for
+      super.
     """
     methods = ['GET', 'POST'] # allowed HTTP methods
     decorators = [] # a list of decorators
