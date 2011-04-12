@@ -106,12 +106,14 @@ The following are simple, quite common views from a real world application.
     class ArtistLogin(View):
         template_name = 'artists/login.html'
 
+        def setup(self):
+            self.c.form = ArtistLoginForm(
+                request=self.request, data=self.request.POST or None)
+
         def get(self):
             self.request.session.set_test_cookie()
-            self.c.form = ArtistLoginForm(request=self.request)
 
         def post(self):
-            self.c.form = ArtistLoginForm(data=self.request.POST)
             if self.c.form.is_valid():
                 login(self.request, self.c.form.artist)
                 return HttpResponseRedirect(reverse('artist_mypage'))

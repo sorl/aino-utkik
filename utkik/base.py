@@ -63,18 +63,25 @@ class View(object):
     def get_response(self, request, *args, **kwargs):
         """
         Return the response from a successful request to the view.
+        Request is just passed in here for decorator compatibility.
 
-        Directs to a suitable handler method based on the HTTP method call.
-        If this handler does not return a response, :meth:`render` is called
-        and returned.
+        First :meth:`setup` is called. If :meth:`setup` does not return a
+        response we direct to a suitable handler method based on the HTTP
+        method call. If this handler does not return a response, :meth:`render`
+        is called and returned.
+        """
+        return (
+            self.setup(*args, **kwargs) or
+            self.get_handler()(*args, **kwargs) or
+            self.render()
+            )
 
+    def setup(self, *args, **kwargs):
+        """
         This is where you would put code that is the same for different
         handlers. For example if you wanted to update template context data for
         both POST and GET methods in the same way.
-
-        Request is just passed in here for decorator compatibility.
         """
-        return self.get_handler()(*args, **kwargs) or self.render()
 
     def get_handler(self):
         """
