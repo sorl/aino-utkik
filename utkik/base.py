@@ -67,12 +67,14 @@ class View(object):
 
         First :meth:`setup` is called. If :meth:`setup` does not return a
         response we direct to a suitable handler method based on the HTTP
-        method call. If this handler does not return a response, :meth:`render`
-        is called and returned.
+        method call. By default the handler is already checked for existense in
+        :meth:`_decorate`. If the handler does not return a response,
+        :meth:`render` is called and returned.
         """
+        handler = getattr(self, self.request.method.lower())
         return (
             self.setup(*args, **kwargs) or
-            self.get_handler()(*args, **kwargs) or
+            handler(*args, **kwargs) or
             self.render()
             )
 
@@ -82,15 +84,6 @@ class View(object):
         handlers. For example if you wanted to update template context data for
         both POST and GET methods in the same way.
         """
-
-    def get_handler(self):
-        """
-        Return the method for the current request.
-
-        Override this to change the handler method that is used for a request,
-        for example, to use an alternate handler for AJAX calls.
-        """
-        return getattr(self, self.request.method.lower())
 
     def get_context_data(self):
         """
