@@ -68,24 +68,24 @@ class View(object):
         Return the response from a successful request to the view.
         Request is just passed in here for decorator compatibility.
 
-        First :meth:`setup` is called. If :meth:`setup` does not return a
-        response we direct to a suitable handler method based on the HTTP
-        method call. By default the handler is already checked for existense in
-        :meth:`_decorate`. If the handler does not return a response,
-        :meth:`render` is called and returned.
+        First :meth:`setup` is called, mostly used for context to be accessed
+        across different methods. Then we get the response from suitable
+        handler method based on the HTTP method call. By default the handler is
+        already checked for existense in :meth:`_decorate`. If the handler does
+        not return a response, :meth:`render` is called and returned.
         """
+        self.setup(*args, **kwargs)
         handler = getattr(self, self.request.method.lower())
-        return (
-            self.setup(*args, **kwargs) or
-            handler(*args, **kwargs) or
-            self.render()
-            )
+        return handler(*args, **kwargs) or self.render()
 
     def setup(self, *args, **kwargs):
         """
         This is where you would put code that is the same for different
         handlers. For example if you wanted to update template context data for
-        both POST and GET methods in the same way.
+        both POST and GET methods in the same way::
+
+            self.c.form = Form(data=self.request.POST or None)
+
         """
 
     def get_context_data(self):
