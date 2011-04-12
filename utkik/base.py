@@ -32,7 +32,7 @@ class View(object):
     - We don't like super. We want common View subclasses without the need for
       super.
     """
-    methods = ['GET', 'POST' 'PUT', 'DELETE'] # allowed HTTP methods
+    methods = ['GET', 'POST', 'PUT', 'DELETE'] # allowed HTTP methods
     decorators = [] # a list of decorators
     template_name = None # template name to render to
 
