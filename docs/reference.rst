@@ -25,6 +25,11 @@ template_name
 ^^^^^^^^^^^^^
 This is the template that the ``render`` method will use to render to.
 
+ajax_template_name
+^^^^^^^^^^^^^
+This is the template that the ``render`` method will use to render to for ajax
+calls.
+
 methods
 -------
 

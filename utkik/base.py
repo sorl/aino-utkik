@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from utkik.decorators import http_methods
+from utkik.utils import uncamel
 
 
 class ContextData(object):
@@ -13,10 +14,8 @@ class ContextData(object):
 
 class View(object):
     """
-    A minimalist View base class.
-
-    Goals
-    -----
+    aino-utkik Goals
+    ----------------
     - Building context for rendering should be simple.
 
     - Source should be easy to follow and encourage this for implementing
@@ -31,10 +30,14 @@ class View(object):
 
     - We don't like super. We want common View subclasses without the need for
       super.
+
+    - Strong convention over configuration, close to magic.
     """
     methods = ['GET', 'POST', 'PUT', 'DELETE'] # allowed HTTP methods
     decorators = [] # a list of decorators
     template_name = None # template name to render to
+    ajax_template_name = None # template name to render to for ajax calls
+    app_label = None # this is used for magic template name computation
 
     def __init__(self):
         """
@@ -42,6 +45,7 @@ class View(object):
         """
         self.c = ContextData() # c is for context
         self.request = None
+        self.app_label = self.app_label or self.__module__.rsplit('.', 1)[0]
 
     def dispatch(self, request, *args, **kwargs):
         """
@@ -99,13 +103,31 @@ class View(object):
         """
         return self.c.__dict__
 
+    def get_template_names(self):
+        """
+        Returns a name or list of template names to be used for the request.
+        Used by :meth:`render`.
+        """
+        if self.request.is_ajax() and self.ajax_template_name:
+            return self.ajax_template_name
+        if self.template_name:
+            # We render ajax calls here to so that we not raise errors if
+            # someone calls the view using xhr headers and the ajax template
+            # does not exist.
+            return self.template_name
+        # begin black magic for lazy ninjas
+        name = uncamel(self.__class__.__name__)
+        if self.request.is_ajax():
+            return u'%s/inc/ajax_%s.html' % (self.app_label, name)
+        return u'%s/%s.html' % (self.app_label, name)
+
     def render(self):
         """
-        Renders :meth:`self.template_name` using :meth:`get_context_data`.
+        Renders :meth:`self.get_template_names` using :meth:`get_context_data`.
 
         By default, this is called from :meth:`get_response` if the handler does
         not return a response.
         """
-        return render_to_response(self.template_name,
+        return render_to_response(self.get_template_names(),
             self.get_context_data(), RequestContext(self.request))
 

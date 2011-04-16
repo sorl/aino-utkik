@@ -1,5 +1,50 @@
+import re
 import sys
 from functools import update_wrapper
+from django.http import HttpResponse
+from django.utils import simplejson
+
+
+uncamel_patterns = (
+    re.compile('(.)([A-Z][a-z]+)'),
+    re.compile('([a-z0-9])([A-Z])'),
+    )
+
+
+class HttpJSONResponse(HttpResponse):
+    """
+    A convenient response class for json serializable data.
+    """
+    def __init__(self, content='', mimetype=None, **kwargs):
+        content = simplejson.dumps(content)
+        mimetype = mimetype or 'application/json'
+        return super(HttpJSONResponse, self).__init__(
+            content=content, mimetype=mimetype, **kwargs
+            )
+
+
+def uncamel(s):
+    """
+    Make camelcase lowercase and use underscores.
+
+        >>> uncamel('CamelCase')
+        'camel_case'
+        >>> uncamel('CamelCamelCase')
+        'camel_camel_case'
+        >>> uncamel('Camel2Camel2Case')
+        'camel2_camel2_case'
+        >>> uncamel('getHTTPResponseCode')
+        'get_http_response_code'
+        >>> uncamel('get2HTTPResponseCode')
+        'get2_http_response_code'
+        >>> uncamel('HTTPResponseCode')
+        'http_response_code'
+        >>> uncamel('HTTPResponseCodeXYZ')
+        'http_response_code_xyz'
+    """
+    for pat in uncamel_patterns:
+        s = pat.sub(r'\1_\2', s)
+    return s.lower()
 
 
 class _Missing(object):
