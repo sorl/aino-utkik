@@ -118,7 +118,7 @@ class View(object):
         # begin black magic for lazy ninjas
         name = uncamel(self.__class__.__name__)
         if self.request.is_ajax():
-            return u'%s/inc/ajax_%s.html' % (self.app_label, name)
+            return u'%s/%s.ajax.html' % (self.app_label, name)
         return u'%s/%s.html' % (self.app_label, name)
 
     def render(self):
