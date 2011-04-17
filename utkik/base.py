@@ -106,7 +106,10 @@ class View(object):
         Returns list of template names to be used for the request. Used by
         :meth:`render`.
         """
-        fmt = self.__module__.split('.')[-2], uncamel(self.__class__.__name__)
+        for dirname in reversed(self.__module__.split('.')):
+            if dirname != 'views':
+                break
+        fmt = dirname, uncamel(self.__class__.__name__)
         template_names = [ self.template_name, u'%s/%s.html' % fmt ]
         if self.request.is_ajax():
             template_names = [ self.ajax_template_name,
