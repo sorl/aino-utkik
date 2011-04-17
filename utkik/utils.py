@@ -18,7 +18,7 @@ class HttpJSONResponse(HttpResponse):
     def __init__(self, content='', mimetype=None, **kwargs):
         content = simplejson.dumps(content)
         mimetype = mimetype or 'application/json'
-        return super(HttpJSONResponse, self).__init__(
+        super(HttpJSONResponse, self).__init__(
             content=content, mimetype=mimetype, **kwargs
             )
 
