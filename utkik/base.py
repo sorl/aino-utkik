@@ -105,21 +105,15 @@ class View(object):
 
     def get_template_names(self):
         """
-        Returns a name or list of template names to be used for the request.
-        Used by :meth:`render`.
+        Returns list of template names to be used for the request. Used by
+        :meth:`render`.
         """
-        if self.request.is_ajax() and self.ajax_template_name:
-            return self.ajax_template_name
-        if self.template_name:
-            # We render ajax calls here to so that we not raise errors if
-            # someone calls the view using xhr headers and the ajax template
-            # does not exist.
-            return self.template_name
-        # begin black magic for lazy ninjas
-        name = uncamel(self.__class__.__name__)
+        fmt = (self.app_label, uncamel(self.__class__.__name__))
+        template_names = [ self.template_name, u'%s/%s.html' % fmt ]
         if self.request.is_ajax():
-            return u'%s/%s.ajax.html' % (self.app_label, name)
-        return u'%s/%s.html' % (self.app_label, name)
+            template_names = [ self.ajax_template_name,
+                u'%s/%s.ajax.html' % fmt ] + template_names
+        return [ t for t in template_names if t ]
 
     def render(self):
         """
