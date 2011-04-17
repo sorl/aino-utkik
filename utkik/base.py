@@ -37,7 +37,6 @@ class View(object):
     decorators = [] # a list of decorators
     template_name = None # template name to render to
     ajax_template_name = None # template name to render to for ajax calls
-    app_label = None # this is used for magic template name computation
 
     def __init__(self):
         """
@@ -45,7 +44,6 @@ class View(object):
         """
         self.c = ContextData() # c is for context
         self.request = None
-        self.app_label = self.app_label or self.__module__.rsplit('.', 1)[0]
 
     def dispatch(self, request, *args, **kwargs):
         """
@@ -108,7 +106,7 @@ class View(object):
         Returns list of template names to be used for the request. Used by
         :meth:`render`.
         """
-        fmt = (self.app_label, uncamel(self.__class__.__name__))
+        fmt = self.__module__.split('.')[-2], uncamel(self.__class__.__name__)
         template_names = [ self.template_name, u'%s/%s.html' % fmt ]
         if self.request.is_ajax():
             template_names = [ self.ajax_template_name,

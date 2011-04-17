@@ -83,24 +83,21 @@ start something like::
 
 At the end of the handler you can either return a valid ``HttpResponse`` or you
 don't return anything. If you don't return anything the ``self.render`` method
-will be called. This method renders :meth:`get_template_names` with
-:meth:`self.get_context_data` as context data and returns the result.
-:meth:`get_template_names` by default returns a list with templates to try to
-find and render to the first existing one. This list of templates will be
-automatically computed for you unless you set it exlicitly set it. First we try
-to figure out the current app. this is stored in :attr:`app_label` and is
-configurable if you have some special configuration setup. Then we use the
-current name of the view class but using lower-case letters and underscores thus
-``ProductList`` will become ``product_list`` and s on. From these variables we
-put together a path for the template: ``<< app_label >>/<< uncameled class name
->>.html`` and for ajax calls this is ``<< app_label >>/<< uncameled class name
->>.ajax.html``. You have the option to override this, although I dicourage
-doing so. The class properties are: :attr:`template_name` and
-:attr:`ajax_template_name`.
+will be called. This method renders the first existing template returned from
+:meth:`get_template_names` with :meth:`self.get_context_data` as context data
+and returns the result. Unless :attr:`template_name` nor
+:attr:`ajax_template_name` is defined :meth:`get_template_names` returns a list
+of automatically computed template names. This is how this is done: First we try
+to figure out the current app_label then we use the current name of the view
+class but using lower-case letters and underscores thus ``ProductList`` will
+become ``product_list`` and s on. From these variables we put together a path
+for the template: ``<< app_label >>/<< un-cameled class name >>.html`` and for
+ajax calls this is ``<< app_label >>/<< un-cameled class name >>.ajax.html``.
+You have the option to override this, although I dicourage doing so. The class
+properties are: :attr:`template_name` and :attr:`ajax_template_name`.
 
-But wait there is more! In your view you can reference an object
-representing the context as ``self.c``. You can set stuff to the context as
-follows::
+But wait there is more! In your view you can reference an object representing
+the context as ``self.c``. You can set stuff to the context as follows::
 
     self.c.news = get_object_or_404(News.objects, slug=slug)
 
