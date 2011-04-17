@@ -23,12 +23,15 @@ A list of decorators applied to ``get_response``.
 
 template_name
 ^^^^^^^^^^^^^
-This is the template that the ``render`` method will use to render to.
+This is the template that the :meth:`render` will firstly try to render to. If
+you don't set this or this template is not found :meth:`get_template_names` will
+also return an automatically computed template name for you as: ``<< app_label
+>>/<< un-cameled class name >>.html``.
 
 ajax_template_name
-^^^^^^^^^^^^^
-This is the template that the ``render`` method will use to render to for ajax
-calls.
+^^^^^^^^^^^^^^^^^^
+This does exactly as :attr:`template_name` but for ajax calls and the computed
+template name is: ``<< app_label >>/<< un-cameled class name >>.ajax.html``.
 
 methods
 -------

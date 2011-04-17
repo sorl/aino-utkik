@@ -17,8 +17,6 @@ The following are simple, quite common views from a real world application.
 |utkik|::
 
     class ArtistDetail(View):
-        template_name = 'artists/artist_detail.html'
-
         def get(self, slug):
             self.c.artist = get_object_or_404(Artist.publ, slug=slug)
 
@@ -48,8 +46,6 @@ The following are simple, quite common views from a real world application.
 |utkik|::
 
     class ArtistList(View):
-        template_name = 'artists/artist_list.html'
-
         def get(self, slug=None, tag=None):
             self.c.selected_genre = get_object_or_404(Genre.objects, slug=slug)
             self.c.artists = Artist.publ.filter(genres=self.c.selected_genre).order_by('?')
@@ -75,9 +71,8 @@ The following are simple, quite common views from a real world application.
 
 |utkik|::
 
-    class MoreArtists(View):
+    class ArtistsInFocus(View):
         decorators = [ requires_ajax ]
-        template_name = 'artists/inc/artists_in_focus.html'
 
         def get(self):
             self.c.artists = Artist.publ.all().order_by('?')[:6]
@@ -86,7 +81,7 @@ The following are simple, quite common views from a real world application.
 
     class ArtistLogin(FormView):
         form_class = ArtistLoginForm
-        template_name = 'artists/login.html'
+        template_name = 'artists/artist_login.html'
 
         def get(self, request, *args, **kwargs):
             request.session.set_test_cookie()
@@ -104,8 +99,6 @@ The following are simple, quite common views from a real world application.
 |utkik|::
 
     class ArtistLogin(View):
-        template_name = 'artists/login.html'
-
         def setup(self):
             self.c.form = ArtistLoginForm(
                 request=self.request, data=self.request.POST or None)
