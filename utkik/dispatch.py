@@ -47,11 +47,14 @@ class ViewWrapper(object):
                 return self.view().dispatch(request, *args, **kwargs)
             elif callable(self.view):
                 return self.view(request, *args, **kwargs)
-        except Exception:
-            cls, e, trace = sys.exc_info()
-            msg = 'Exception in %s.%s: %s' % (
-                self.view.__module__, self.view.__name__, e)
-            raise cls(msg), None, trace
+        except Exception, e:
+            try:
+                cls, e, trace = sys.exc_info()
+                msg = 'Exception in %s.%s: %s' % (
+                    self.view.__module__, self.view.__name__, e)
+                raise cls(msg), None, trace
+            except:
+                raise e
         raise ImproperlyConfigured('%s.%s does not define a view function or '
             'class.' % (self.view.__module__, self.view.__name__))
 
