@@ -22,10 +22,10 @@ class ViewWrapper(object):
 
     def __init__(self, view):
         self.view = view
-        if isinstance(view, object):
-            update_wrapper(self, view.__class__)
-        else:
-            update_wrapper(self, view)
+        if not hasattr(view, '__name__') and isinstance(view, object):
+            # for class instances that use call
+            view.__name__ = view.__class__.__name__
+        update_wrapper(self, view)
 
     @property
     def func_name(self):
