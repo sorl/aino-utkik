@@ -60,11 +60,15 @@ class ViewWrapper(object):
                 cls, e, trace = sys.exc_info()
                 msg = 'Exception in %s.%s: %s' % (
                     self.view.__module__, self.view.__name__, e)
-                raise cls(msg), None, trace
-            except:
+            except Exception:
                 raise e
+            else:
+                raise cls(msg), None, trace
         raise ImproperlyConfigured('%s.%s does not define a view function or '
             'class view.' % (self.view.__module__, self.view.__name__))
+
+    def __getattr__(self, name):
+        return getattr(self.view, name)
 
 
 class LazyViewWrapper(ViewWrapper):
