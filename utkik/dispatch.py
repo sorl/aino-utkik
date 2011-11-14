@@ -1,9 +1,10 @@
 import re
 import sys
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 from django.core import urlresolvers
+from django.core.exceptions import ImproperlyConfigured
 from functools import update_wrapper
+from inspect import isclass
 from utkik.utils import import_string, cached_property
 
 
@@ -21,7 +22,10 @@ class ViewWrapper(object):
 
     def __init__(self, view):
         self.view = view
-        update_wrapper(self, view)
+        if isinstance(view, object):
+            update_wrapper(self, view.__class__)
+        else:
+            update_wrapper(self, view)
 
     @property
     def func_name(self):
@@ -43,10 +47,14 @@ class ViewWrapper(object):
         useful for view classes in the raised exception.
         """
         try:
-            if hasattr(self.view, 'dispatch'):
-                return self.view().dispatch(request, *args, **kwargs)
-            elif callable(self.view):
-                return self.view(request, *args, **kwargs)
+            if isclass(self.view):
+                view = self.view()
+            else:
+                view = self.view
+            if hasattr(view, 'dispatch'):
+                return view.dispatch(request, *args, **kwargs)
+            elif callable(view):
+                return view(request, *args, **kwargs)
         except Exception, e:
             try:
                 cls, e, trace = sys.exc_info()
@@ -56,7 +64,7 @@ class ViewWrapper(object):
             except:
                 raise e
         raise ImproperlyConfigured('%s.%s does not define a view function or '
-            'class.' % (self.view.__module__, self.view.__name__))
+            'class view.' % (self.view.__module__, self.view.__name__))
 
 
 class LazyViewWrapper(ViewWrapper):
