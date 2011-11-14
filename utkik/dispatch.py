@@ -49,11 +49,11 @@ class ViewWrapper(object):
         try:
             if isclass(self.view):
                 view = self.view()
+                if hasattr(view, 'dispatch'):
+                    return view.dispatch(request, *args, **kwargs)
             else:
                 view = self.view
-            if hasattr(view, 'dispatch'):
-                return view.dispatch(request, *args, **kwargs)
-            elif callable(view):
+            if callable(view):
                 return view(request, *args, **kwargs)
         except Exception, e:
             try:
@@ -76,13 +76,13 @@ class LazyViewWrapper(ViewWrapper):
     Lazy import wrapper for a view function or class.
     """
 
-    def __init__(self, import_name):
-        module, name = import_name.rsplit('.', 1)
+    def __init__(self, dot_name):
+        module, name = dot_name.rsplit('.', 1)
         if module in settings.INSTALLED_APPS:
             module += '.views'
         self.__module__ = module
         self.__name__ = name
-        self.import_name = '%s.%s' % (module, name)
+        self.dot_name = '%s.%s' % (module, name)
 
     @cached_property
     def view(self):
@@ -91,7 +91,7 @@ class LazyViewWrapper(ViewWrapper):
         view class that this is not an instance but the class, instantiation
         will be done in the ``__call__`` method.
         """
-        view = import_string(self.import_name)
+        view = import_string(self.dot_name)
         self.__doc__ = view.__doc__
         return view
 
