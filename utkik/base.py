@@ -116,13 +116,16 @@ class View(object):
                 u'%s/%s.ajax.html' % fmt ] + template_names
         return [ t for t in template_names if t ]
 
-    def render(self):
+    def render(self, template_name=None):
         """
-        Renders :meth:`self.get_template_names` using :meth:`get_context_data`.
+        Renders :meth:`self.get_template_names` using :meth:`get_context_data`,
+        alternatively renders a provided `template_name` template.
 
         By default, this is called from :meth:`get_response` if the handler does
         not return a response.
         """
-        return render_to_response(self.get_template_names(),
-            self.get_context_data(), RequestContext(self.request))
+        return render_to_response(
+            self.template_name or self.get_template_names(),
+            self.get_context_data(), RequestContext(self.request)
+            )
 
