@@ -10,7 +10,7 @@ class TestCommand(test):
 
 setup(
     name='aino-utkik',
-    version='0.7.4',
+    version='0.7.5',
     description='Small, clean code with a lazy view dispatcher and class based views for Django.',
     long_description=open('README.rst').read(),
     author='Mikko Hellsing',

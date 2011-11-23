@@ -124,8 +124,6 @@ class View(object):
         By default, this is called from :meth:`get_response` if the handler does
         not return a response.
         """
-        return render_to_response(
-            self.template_name or self.get_template_names(),
-            self.get_context_data(), RequestContext(self.request)
-            )
+        return render_to_response(template_name or self.get_template_names(),
+            self.get_context_data(), RequestContext(self.request))
 
