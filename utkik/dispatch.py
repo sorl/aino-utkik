@@ -15,6 +15,10 @@ handler404 = 'django.views.defaults.page_not_found'
 handler500 = 'django.views.defaults.server_error'
 
 
+class UtkikException(Exception):
+    pass
+
+
 class ViewWrapper(object):
     """
     A view wrapper that makes function and class based views callable
@@ -55,15 +59,16 @@ class ViewWrapper(object):
                 view = self.view
             if callable(view):
                 return view(request, *args, **kwargs)
-        except Exception, e:
+        except Exception, ex:
             try:
                 cls, e, trace = sys.exc_info()
-                msg = 'Exception in %s.%s: %s' % (
-                    self.view.__module__, self.view.__name__, e)
+                msg = '%s in %s.%s: %s' % (
+                    cls.__name__, self.view.__module__, self.view.__name__, e
+                    )
             except Exception:
-                raise e
+                raise ex
             else:
-                raise cls(msg), None, trace
+                raise UtkikException(msg), None, trace
         raise ImproperlyConfigured('%s.%s does not define a view function or '
             'class view.' % (self.view.__module__, self.view.__name__))
 
