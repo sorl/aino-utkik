@@ -5,7 +5,7 @@ from django.core import urlresolvers
 from django.core.exceptions import ImproperlyConfigured
 from functools import update_wrapper
 from inspect import isclass
-from utkik.utils import import_string, cached_property
+from utkik.utils import import_string, cached_property, uncamel
 
 
 __all__ = ['handler404', 'handler500', 'include', 'patterns', 'url']
@@ -184,5 +184,7 @@ def url(regex, view, kwargs=None, name=None, prefix=''):
                     )
             if prefix:
                 view = '%s.%s' % (prefix, view)
+            if name is None:
+                name = uncamel(view.split('.')[-1])
         return RegexURLPattern(regex, view, kwargs, name)
 
