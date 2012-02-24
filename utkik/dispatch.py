@@ -2,7 +2,8 @@ import re
 import sys
 from django.conf import settings
 from django.core import urlresolvers
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
+from django.http import Http404
 from functools import update_wrapper
 from inspect import isclass
 from utkik.utils import import_string, cached_property, uncamel
@@ -59,6 +60,8 @@ class ViewWrapper(object):
                 view = self.view
             if callable(view):
                 return view(request, *args, **kwargs)
+        except (Http404, PermissionDenied, SystemExit):
+            raise
         except Exception, ex:
             try:
                 cls, e, trace = sys.exc_info()
