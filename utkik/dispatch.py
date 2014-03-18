@@ -110,7 +110,7 @@ class RegexURLPattern(urlresolvers.RegexURLPattern):
         We just changed the way the callback references are set compared to
         ``django.core.urlresolvers.RegexURLPattern.__init__``.
         """
-        self._regex = re.compile(regex, re.UNICODE)
+        urlresolvers.LocaleRegexProvider.__init__(self, regex)
         self._callback = callback
         self.default_args = default_args or {}
         self.name = name
