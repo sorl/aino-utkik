@@ -5,6 +5,9 @@ aino-utkik
 aino-utkik provides minimalistic class based views for Django focusing on
 common usage, readability and convienience.
 
+Django < 1.4 use <= 0.7.8
+Django >= 1.4 use > 0.7.8
+
 Example::
 
     # urls.py
