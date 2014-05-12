@@ -105,23 +105,6 @@ class LazyViewWrapper(ViewWrapper):
 
 
 class RegexURLPattern(urlresolvers.RegexURLPattern):
-    def __init__(self, regex, callback, default_args=None, name=None):
-        """
-        We just changed the way the callback references are set compared to
-        ``django.core.urlresolvers.RegexURLPattern.__init__``.
-        """
-        urlresolvers.LocaleRegexProvider.__init__(self, regex)
-        self._callback = callback
-        self.default_args = default_args or {}
-        self.name = name
-
-    def add_prefix(self, prefix):
-        """
-        Adds the prefix string to a string-based callback.
-        """
-        if prefix and isinstance(self._callback, basestring):
-            self._callback = '%s.%s' % (prefix, self._callback)
-
     @cached_property
     def callback(self):
         """
@@ -130,8 +113,8 @@ class RegexURLPattern(urlresolvers.RegexURLPattern):
         the callback wrapped in a ``ViewWrapper`` or ``LazyViewWrapper``.
         """
         try:
-            if isinstance(self._callback, basestring):
-                return LazyViewWrapper(self._callback)
+            if hasattr(self, '_callback_str'):
+                return LazyViewWrapper(self._callback_str)
             return ViewWrapper(self._callback)
         except Exception, e:
             raise urlresolvers.ViewDoesNotExist(e)
