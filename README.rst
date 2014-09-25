@@ -6,6 +6,7 @@ aino-utkik provides minimalistic class based views for Django focusing on
 common usage, readability and convienience.
 
 For Django 1.3 or earlier use 0.7.8
+For Django 1.7 or later use 0.8.0 or later
 
 Example::
 

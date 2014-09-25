@@ -15,11 +15,11 @@ class HttpJSONResponse(HttpResponse):
     """
     A convenient response class for json serializable data.
     """
-    def __init__(self, content='', mimetype=None, **kwargs):
+    def __init__(self, content='', content_type=None, **kwargs):
         content = simplejson.dumps(content)
-        mimetype = mimetype or 'application/json'
+        content_type = content_type or 'application/json'
         super(HttpJSONResponse, self).__init__(
-            content=content, mimetype=mimetype, **kwargs
+            content=content, content_type=content_type, **kwargs
             )
 
 
