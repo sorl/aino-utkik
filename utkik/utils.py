@@ -1,8 +1,8 @@
+import json
 import re
 import sys
 from functools import update_wrapper
 from django.http import HttpResponse
-from django.utils import simplejson
 
 
 uncamel_patterns = (
@@ -16,7 +16,7 @@ class HttpJSONResponse(HttpResponse):
     A convenient response class for json serializable data.
     """
     def __init__(self, content='', content_type=None, **kwargs):
-        content = simplejson.dumps(content)
+        content = json.dumps(content)
         content_type = content_type or 'application/json'
         super(HttpJSONResponse, self).__init__(
             content=content, content_type=content_type, **kwargs

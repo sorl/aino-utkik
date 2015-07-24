@@ -1,8 +1,10 @@
 #!/usr/bin/env python
+import django
 import os
 import sys
 from django.conf import settings
 from os.path import abspath, dirname, join as pjoin
+
 
 
 def runtests(test_labels=None, verbosity=1, interactive=True, failfast=True):
@@ -20,6 +22,7 @@ def runtests(test_labels=None, verbosity=1, interactive=True, failfast=True):
             },
             INSTALLED_APPS=test_labels,
         )
+    django.setup()
     from django.test.utils import get_runner
     TestRunner = get_runner(settings)
     test_runner = TestRunner(verbosity=verbosity, interactive=interactive, failfast=failfast)
