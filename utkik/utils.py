@@ -70,9 +70,6 @@ def import_string(import_name, silent=False):
                    `None` is returned instead.
     :return: imported object
     """
-    # force the import name to automatically convert to strings
-    if isinstance(import_name, unicode):
-        import_name = str(import_name)
     try:
         if ':' in import_name:
             module, obj = import_name.split(':', 1)
@@ -80,10 +77,6 @@ def import_string(import_name, silent=False):
             module, obj = import_name.rsplit('.', 1)
         else:
             return __import__(import_name)
-        # __import__ is not able to handle unicode strings in the fromlist
-        # if the module is a package
-        if isinstance(obj, unicode):
-            obj = obj.encode('utf-8')
         try:
             return getattr(__import__(module, None, None, [obj]), obj)
         except (ImportError, AttributeError):
