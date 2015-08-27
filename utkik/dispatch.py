@@ -62,7 +62,7 @@ class ViewWrapper(object):
                 return view(request, *args, **kwargs)
         except (Http404, PermissionDenied, SystemExit):
             raise
-        except Exception, ex:
+        except Exception as ex:
             try:
                 cls, e, trace = sys.exc_info()
                 msg = '%s in %s.%s: %s' % (
@@ -71,7 +71,7 @@ class ViewWrapper(object):
             except Exception:
                 raise ex
             else:
-                raise UtkikException(msg), None, trace
+                raise UtkikException(msg).with_traceback(trace)
         raise ImproperlyConfigured('%s.%s does not define a view function or '
             'class view.' % (self.view.__module__, self.view.__name__))
 
@@ -116,7 +116,7 @@ class RegexURLPattern(urlresolvers.RegexURLPattern):
             if hasattr(self, '_callback_str'):
                 return LazyViewWrapper(self._callback_str)
             return ViewWrapper(self._callback)
-        except Exception, e:
+        except Exception as e:
             raise urlresolvers.ViewDoesNotExist(e)
 
 
@@ -163,7 +163,7 @@ def url(regex, view, kwargs=None, name=None, prefix=''):
             app_name=app_name, namespace=namespace
             )
     else:
-        if isinstance(view, basestring):
+        if isinstance(view, str):
             if not view:
                 raise ImproperlyConfigured('Empty URL pattern view name not '
                     'permitted (for pattern %r)' % regex

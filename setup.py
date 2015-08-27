@@ -10,7 +10,7 @@ class TestCommand(test):
 
 setup(
     name='aino-utkik',
-    version='0.8.1',
+    version='0.9.0',
     description='Small, clean code with a lazy view dispatcher and class based views for Django.',
     long_description=open('README.rst').read(),
     author='Mikko Hellsing',
@@ -26,7 +26,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
+        'Programming Language :: Python :: 3 :: Only',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Framework :: Django',
     ],

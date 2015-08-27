@@ -92,7 +92,7 @@ def import_string(import_name, silent=False):
             modname = module + '.' + obj
             try:
                 __import__(modname)
-            except ImportError, e:
+            except ImportError as e:
                 raise ImportError('Failed to import %s: %s' % (modname, e))
             return sys.modules[modname]
     except ImportError:
